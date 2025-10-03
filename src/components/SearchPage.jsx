@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { templeApi } from '../services/api';
+import { api } from '../services/api';
 
 const SearchPage = ({ isDarkMode }) => {
   const [searchParams] = useSearchParams();
