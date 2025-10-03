@@ -1,22 +1,20 @@
-// Remove the broken import:
-// import { getSessionId } from './utils/session'; 
-
-// --- CRITICAL FIX 1: DEFINE MISSING SESSION FUNCTION ---
+// --- CRITICAL FIX: DEFINE MISSING SESSION FUNCTION LOCALLY ---
 // Function to handle session ID for unauthenticated bucketlist storage
 const getSessionId = () => {
   let sessionId = sessionStorage.getItem('temple_session_id');
   if (!sessionId) {
-    // Generate a simple, unique ID (e.g., using current time and random number)
+    // Generate a simple, unique ID
     sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     sessionStorage.setItem('temple_session_id', sessionId);
   }
   return sessionId;
 };
+// -----------------------------------------------------------------
 
 // API service for handling all backend calls
-// IMPORTANT: This must be set to the base domain only (no /api)
-const BASE_URL = import.meta.env.VITE_APP_API_URL || ''; 
+const BASE_URL = import.meta.env.VITE_APP_API_URL || ''; // Set BASE_URL to the domain only
 
+// ... rest of the file
 // --- Helper Functions ---
 
 const handleResponse = async (response) => {
