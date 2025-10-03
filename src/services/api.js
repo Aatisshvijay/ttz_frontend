@@ -1,167 +1,117 @@
-import { getSessionId } from './utils/session'; // Assuming you have this helper function
+import axios from 'axios';
+import { getSessionId } from './utils/session';
 
-// API service for handling all backend calls
-const BASE_URL = import.meta.env.VITE_APP_API_URL || ''; // Set BASE_URL to the domain only
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'https://your-render-backend-url.onrender.com';
 
-// --- Helper Functions ---
-
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Network or server error occurred' }));
-    // Throw an error that the calling component can catch
-    throw new Error(errorData.error || errorData.message || 'Failed to fetch');
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
   }
-  // Return the JSON data directly
-  return response.json(); 
-};
+});
 
-const createHeaders = (token, isJson = true) => {
-  const headers = {};
-  if (isJson) {
-    headers['Content-Type'] = 'application/json';
-  }
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  return headers;
-};
-
-// --- Cloudinary Utilities (Preserving them) ---
+// Cloudinary Utilities
 export const optimizeCloudinaryUrl = (url, width = 800) => {
   if (!url || !url.includes('cloudinary.com')) return url;
-  
   const parts = url.split('/upload/');
-  if (parts.length === 2) {
-    return `${parts[0]}/upload/f_auto,q_auto:best,w_${width},fl_progressive,dpr_auto/${parts[1]}`;
-  }
-  return url;
+  return parts.length === 2 
+    ? `${parts[0]}/upload/f_auto,q_auto:best,w_${width},fl_progressive,dpr_auto/${parts[1]}`
+    : url;
 };
 
 export const getBlurPlaceholder = (url) => {
   if (!url || !url.includes('cloudinary.com')) return null;
-  
   const parts = url.split('/upload/');
-  if (parts.length === 2) {
-    return `${parts[0]}/upload/w_20,e_blur:1000,q_auto:low,f_auto/${parts[1]}`;
-  }
-  return null;
+  return parts.length === 2 
+    ? `${parts[0]}/upload/w_20,e_blur:1000,q_auto:low,f_auto/${parts[1]}`
+    : null;
 };
 
 export const getOptimizedImageUrl = (url, width = 400) => {
   return optimizeCloudinaryUrl(url, width);
 };
 
-
-// --- API Service Definitions ---
-
+// API Services
 const authApi = {
   login: async (email, password) => {
-    // Correct Path: ${BASE_URL}/api/auth/login
-    const response = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: createHeaders(null, true),
-      body: JSON.stringify({ email, password }),
-    });
-    return handleResponse(response);
+    const response = await axiosInstance.post('/api/auth/login', { email, password });
+    return response.data;
   },
 
   register: async (name, email, password) => {
-    // Correct Path: ${BASE_URL}/api/auth/register
-    const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: createHeaders(null, true),
-      body: JSON.stringify({ name, email, password }),
-    });
-    return handleResponse(response);
+    const response = await axiosInstance.post('/api/auth/register', { name, email, password });
+    return response.data;
   },
 
   getMe: async (token) => {
-    // Correct Path: ${BASE_URL}/api/auth/me
-    const response = await fetch(`${BASE_URL}/api/auth/me`, {
-      method: 'GET',
-      headers: createHeaders(token, false),
+    const response = await axiosInstance.get('/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` }
     });
-    return handleResponse(response);
+    return response.data;
   },
-  
+
   logout: async (token) => {
-    // Correct Path: ${BASE_URL}/api/auth/logout
-    const response = await fetch(`${BASE_URL}/api/auth/logout`, {
-        method: 'POST',
-        headers: createHeaders(token, false),
+    const response = await axiosInstance.post('/api/auth/logout', null, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-    return handleResponse(response);
+    return response.data;
   }
 };
 
 const bucketlistApi = {
   getBucketlist: async (token) => {
     const sessionId = getSessionId();
-    // Correct Path: ${BASE_URL}/api/bucketlist
-    const response = await fetch(`${BASE_URL}/api/bucketlist`, {
-      method: 'GET',
-      // Ensure sessionId is sent for unauthenticated users
-      headers: { 
-        ...createHeaders(token, false), 
-        'x-session-id': sessionId 
-      },
+    const response = await axiosInstance.get('/api/bucketlist', {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : '',
+        'x-session-id': sessionId
+      }
     });
-    return handleResponse(response);
+    return response.data;
   },
 
-  // ... other bucketlist methods (addItem, removeItem, checkItem) ...
-  
   migrateBucketlist: async (token) => {
     const sessionId = getSessionId();
-    // Correct Path: ${BASE_URL}/api/bucketlist/migrate
-    const response = await fetch(`${BASE_URL}/api/bucketlist/migrate`, {
-      method: 'POST',
-      headers: createHeaders(token, true),
-      body: JSON.stringify({ sessionId })
-    });
-    return handleResponse(response);
+    const response = await axiosInstance.post('/api/bucketlist/migrate', 
+      { sessionId },
+      { headers: { Authorization: `Bearer ${token}` }}
+    );
+    return response.data;
   }
 };
 
 const templeApi = {
   getDeities: async () => {
-    // Correct Path: ${BASE_URL}/api/temples/deities
-    const response = await fetch(`${BASE_URL}/api/temples/deities`);
-    return handleResponse(response);
+    const response = await axiosInstance.get('/api/temples/deities');
+    return response.data;
   },
-  
+
   getGodTemples: async (deity) => {
-    // Correct Path: ${BASE_URL}/api/temples/deity/:deity
-    const response = await fetch(`${BASE_URL}/api/temples/deity/${encodeURIComponent(deity)}`);
-    return handleResponse(response);
+    const response = await axiosInstance.get(`/api/temples/deity/${encodeURIComponent(deity)}`);
+    return response.data;
   },
-  
+
   getCategoryTemples: async (deity, category) => {
-    // Correct Path: ${BASE_URL}/api/temples/deity/:deity/:category
-    const response = await fetch(`${BASE_URL}/api/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`);
-    return handleResponse(response);
+    const response = await axiosInstance.get(
+      `/api/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`
+    );
+    return response.data;
   },
 
   getTempleById: async (id) => {
-    // Correct Path: ${BASE_URL}/api/temples/:id
-    const response = await fetch(`${BASE_URL}/api/temples/${id}`);
-    return handleResponse(response);
+    const response = await axiosInstance.get(`/api/temples/${id}`);
+    return response.data;
   },
 
   searchTemples: async (query, limit = 50) => {
-    // Correct Path: ${BASE_URL}/api/temples/search?q=...
-    const response = await fetch(`${BASE_URL}/api/temples/search?q=${encodeURIComponent(query)}&limit=${limit}`);
-    return handleResponse(response);
+    const response = await axiosInstance.get(`/api/temples/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+    return response.data;
   }
 };
 
-
-// Combine all APIs into a single export object
 export const api = {
   auth: authApi,
   bucketlist: bucketlistApi,
   temples: templeApi
 };
-
-// If you have cloudinary utilities in a separate file, you can keep this export
-// export * from './utils/cloudinary';
