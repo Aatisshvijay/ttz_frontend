@@ -4,7 +4,7 @@
 // CRITICAL: Update with your actual Render URL
 // NOTE: Ensure VITE_API_URL is set in your Vercel/local environment
 // ============================================
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://temple-discovery-api.onrender.com/api'; 
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://ttz-backend.onrender.com'; 
 
 console.log('🌐 API Base URL:', BASE_URL);
 
