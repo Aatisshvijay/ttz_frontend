@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
 
@@ -67,9 +68,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('temple_auth_token', response.token);
         localStorage.setItem('temple_auth_user', JSON.stringify(response.user));
         
-        // Try to migrate session bucketlist if exists
+        // FIXED: Use api.bucketlist.migrateBucketlist instead of api.migrateBucketlist
         try {
-          await api.migrateBucketlist(response.token);
+          await api.bucketlist.migrateBucketlist(response.token);
+          console.log('✅ Bucketlist migration successful');
         } catch (migrateError) {
           console.error('Failed to migrate bucketlist:', migrateError);
           // Don't fail login if migration fails
@@ -112,6 +114,7 @@ export const AuthProvider = ({ children }) => {
     try {
       if (token) {
         await api.auth.logout(token);
+        console.log('✅ Logout successful');
       }
     } catch (error) {
       console.error('Logout API call failed:', error);
