@@ -16,7 +16,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
         setLoadingProgress(10);
         
         const startTime = Date.now();
-        const response = await fetch('/api/temples/deities');
+          const response = await api.temples.getDeities(); // <--- USE THE SERVICE
+
         
         setLoadingProgress(60);
         
