@@ -1,16 +1,18 @@
 import { getSessionId } from './utils/session'; // Assuming you have this helper function
 
 // API service for handling all backend calls
-const BASE_URL = import.meta.env.VITE_APP_API_URL || '/api';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || ''; // Set BASE_URL to the domain only
 
 // --- Helper Functions ---
 
 const handleResponse = async (response) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'Network or server error occurred' }));
+    // Throw an error that the calling component can catch
     throw new Error(errorData.error || errorData.message || 'Failed to fetch');
   }
-  return response.json();
+  // Return the JSON data directly
+  return response.json(); 
 };
 
 const createHeaders = (token, isJson = true) => {
@@ -24,7 +26,7 @@ const createHeaders = (token, isJson = true) => {
   return headers;
 };
 
-// FULL HD QUALITY: q_auto:best for maximum sharpness
+// --- Cloudinary Utilities (Preserving them) ---
 export const optimizeCloudinaryUrl = (url, width = 800) => {
   if (!url || !url.includes('cloudinary.com')) return url;
   
@@ -35,7 +37,6 @@ export const optimizeCloudinaryUrl = (url, width = 800) => {
   return url;
 };
 
-// Get blur placeholder (tiny 20px version for instant loading)
 export const getBlurPlaceholder = (url) => {
   if (!url || !url.includes('cloudinary.com')) return null;
   
@@ -46,10 +47,10 @@ export const getBlurPlaceholder = (url) => {
   return null;
 };
 
-// Get optimized image URL with specific width
 export const getOptimizedImageUrl = (url, width = 400) => {
   return optimizeCloudinaryUrl(url, width);
 };
+
 
 // --- API Service Definitions ---
 
@@ -99,8 +100,7 @@ const bucketlistApi = {
     // Correct Path: ${BASE_URL}/api/bucketlist
     const response = await fetch(`${BASE_URL}/api/bucketlist`, {
       method: 'GET',
-      headers: createHeaders(token, false),
-      // CRITICAL: Ensure sessionId is sent for unauthenticated users if your backend requires it
+      // Ensure sessionId is sent for unauthenticated users
       headers: { 
         ...createHeaders(token, false), 
         'x-session-id': sessionId 
@@ -163,5 +163,5 @@ export const api = {
   temples: templeApi
 };
 
-// Export the base functions for use in other utilities/components
-export * from './utils/cloudinary'; // Assuming you have your cloudinary utilities in a separate file
+// If you have cloudinary utilities in a separate file, you can keep this export
+// export * from './utils/cloudinary';

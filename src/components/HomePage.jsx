@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Gita from "./Gita";
+import { api } from '../services/api'; // <--- ADDED IMPORT OF THE SERVICE
 
 const HomePage = ({ isDarkMode, navigate }) => {
   const [deities, setDeities] = useState([]);
@@ -16,20 +17,21 @@ const HomePage = ({ isDarkMode, navigate }) => {
         setLoadingProgress(10);
         
         const startTime = Date.now();
-          const response = await api.temples.getDeities(); // <--- USE THE SERVICE
-
+        // **FIXED LOGIC**: api.temples.getDeities() returns the JSON data directly.
+        const data = await api.temples.getDeities(); 
         
         setLoadingProgress(60);
         
-        if (!response.ok) throw new Error('Failed to fetch deities');
-        const data = await response.json();
+        // **REMOVED INCORRECT LOGIC**: The api.js service handles these checks.
+        // REMOVED: if (!response.ok) throw new Error('Failed to fetch deities');
+        // REMOVED: const data = await response.json();
         
         setLoadingProgress(90);
         
         console.log(`Deities fetched in ${Date.now() - startTime}ms`);
         console.log('Fetched deities:', data);
         
-        setDeities(data);
+        setDeities(data); // Set the received data
         setLoadingProgress(100);
         
         // Small delay to show completion, then trigger show animation
