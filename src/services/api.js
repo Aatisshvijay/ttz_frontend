@@ -2,8 +2,9 @@
 
 // ============================================
 // CRITICAL: Update with your actual Render URL
+// NOTE: Ensure VITE_API_URL is set in your Vercel/local environment
 // ============================================
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://temple-discovery-api.onrender.com/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://temple-discovery-api.onrender.com/api'; 
 
 console.log('🌐 API Base URL:', BASE_URL);
 
@@ -118,7 +119,7 @@ export const getOptimizedImageUrl = (url, width = 400) => {
 };
 
 // ============================================
-// Image Fallback System
+// Image Fallback System 
 // ============================================
 export const getImageWithFallback = (temple) => {
   if (!temple.image || temple.image.includes('placeholder')) {
@@ -237,9 +238,9 @@ const bucketlistApi = {
     const sessionId = getSessionId();
     return await fetchWithRetry(`${BASE_URL}/bucketlist`, {
       method: 'GET',
-      headers: { 
-        ...createHeaders(token, false), 
-        'x-session-id': sessionId 
+      headers: {
+        ...createHeaders(token, false),
+        'x-session-id': sessionId
       },
     });
   },
@@ -248,9 +249,9 @@ const bucketlistApi = {
     const sessionId = getSessionId();
     return await fetchWithRetry(`${BASE_URL}/bucketlist`, {
       method: 'POST',
-      headers: { 
-        ...createHeaders(token, true), 
-        'x-session-id': sessionId 
+      headers: {
+        ...createHeaders(token, true),
+        'x-session-id': sessionId
       },
       body: JSON.stringify({ templeId })
     });
@@ -260,9 +261,9 @@ const bucketlistApi = {
     const sessionId = getSessionId();
     return await fetchWithRetry(`${BASE_URL}/bucketlist/${templeId}`, {
       method: 'DELETE',
-      headers: { 
-        ...createHeaders(token, false), 
-        'x-session-id': sessionId 
+      headers: {
+        ...createHeaders(token, false),
+        'x-session-id': sessionId
       },
     });
   },
@@ -271,9 +272,9 @@ const bucketlistApi = {
     const sessionId = getSessionId();
     return await fetchWithRetry(`${BASE_URL}/bucketlist/check/${templeId}`, {
       method: 'GET',
-      headers: { 
-        ...createHeaders(token, false), 
-        'x-session-id': sessionId 
+      headers: {
+        ...createHeaders(token, false),
+        'x-session-id': sessionId
       },
     });
   },
