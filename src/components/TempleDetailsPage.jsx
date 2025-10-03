@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { api, getImageUrl } from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
-import { templeApi, getImageUrl } from "../services/api";
+
 
 const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   const [mapError, setMapError] = useState(false);
@@ -126,7 +127,7 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
       setLoading(true);
       setError(null);
       setImageLoaded(false);
-      const templeData = await templeApi.getTempleById(templeId);
+      const templeData = await api.temples.getTempleById(templeId);
       setTemple(templeData);
       setTimeout(() => setShowContent(true), 50);
     } catch (error) {

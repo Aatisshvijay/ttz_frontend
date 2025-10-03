@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { templeApi, getImageWithFallback } from "../services/api";
+import { api, getImageWithFallback } from "../services/api";
 import OptimizedImage from "./OptimizedImage";
 
 const AvatarTemplesPage = ({ isDarkMode }) => {
@@ -18,7 +18,7 @@ const AvatarTemplesPage = ({ isDarkMode }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await templeApi.getAvatarTemples(godName, categoryName);
+       const response = await api.temples.getAvatarTemples(godName, categoryName);
         if (Array.isArray(response)) {
           setTemples(response);
           setTimeout(() => setShowTemples(true), 50);
