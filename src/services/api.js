@@ -1,27 +1,28 @@
+import { getSessionId } from './utils/session'; // Assuming you have this helper function
+
 // API service for handling all backend calls
-// Consolidate base URL to one variable for linter cleanup.
-// It uses an empty string fallback for local dev to work with image paths and proxy.
-const API_BASE_URL = import.meta.env.VITE_APP_API_URL || '';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || '/api';
 
-// ===========================================
-// CRITICAL FIX: ENSURE '/api' PREFIX IS ALWAYS USED
-// ===========================================
-/**
- * Constructs the full API URL, ensuring the '/api' prefix is included when necessary.
- * This fixes the 404/CORS errors on deployment.
- */
-const buildApiUrl = (endpoint) => {
-    // The base API path will be the full URL + /api (prod) OR just /api (local dev)
-    const apiPath = API_BASE_URL.startsWith('http') ? `${API_BASE_URL}/api` : '/api';
-    
-    // Ensure the endpoint doesn't have a leading slash if we're adding one
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
-    
-    // Join the path and the endpoint
-    return `${apiPath}/${cleanEndpoint}`;
+// --- Helper Functions ---
+
+const handleResponse = async (response) => {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Network or server error occurred' }));
+    throw new Error(errorData.error || errorData.message || 'Failed to fetch');
+  }
+  return response.json();
 };
-// ===========================================
 
+const createHeaders = (token, isJson = true) => {
+  const headers = {};
+  if (isJson) {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
 
 // FULL HD QUALITY: q_auto:best for maximum sharpness
 export const optimizeCloudinaryUrl = (url, width = 800) => {
@@ -50,261 +51,70 @@ export const getOptimizedImageUrl = (url, width = 400) => {
   return optimizeCloudinaryUrl(url, width);
 };
 
-// Deity image mapping
-const deityImageMap = {
-  "Vishnu (108 Divya Desams)": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png",
-  "Maha Avatars of Vishnu": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png",
-  "Lord Krishna": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147334/krishna_cwqrsj.png",
-  "Lord Narasimha": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147309/narasimha_zuqnth.png",
-  "Lord Parshuram": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147298/parshurama_jrryj4.png",
-  "Lord Sri Rama": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147283/rama_jb7c67.png",
-  "Lord Vamana": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147283/vamana_bfz0nq.png",
-  "Lord Varaha": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147273/varaha_dbildy.png",
-  "Matsya Avatar": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147315/matsya_nr5z9h.png",
-  "Kurma Avatar": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147338/kurmam_clsc26.png",
-  "Jyotirlingas": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147342/jyotirlingas_dpmmxs.png",
-  "Pancha Bhoota Sthalams": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147292/pb_ng5jll.png",
-  "Other Famous Shiva Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147363/bh_y9yjn1.png",
-  "Shakti Peethas": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147281/shakti_e7kaaz.png",
-  "Devi Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147391/dt1_hwfpkt.png",
-  "Lakshmi Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147323/laxmi_su1sgk.png",
-  "Hanuman Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147343/hanuman_smnyyx.png",
-  "Ganesha Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147355/ganesha_xgclup.png",
-  "Arupadai Veedu Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147315/murugan_djfmgk.png",
-  "Ayyappa Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147367/ayyapa_btcxp1.png",
-  "Navagraha Temples": "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147307/navagraha_v5uk7h.png",
-};
+// --- API Service Definitions ---
 
-// Deity descriptions
-const deityDescriptions = {
-  "Maha Avatars of Vishnu": "The supreme preserver of the universe in his various incarnations",
-  "Lord Shiva": "The destroyer and transformer in the Hindu trinity",
-  "Goddess Shakti": "The divine feminine creative power and cosmic energy",
-  "Lord Ganesha": "The remover of obstacles and lord of beginnings",
-  "Lord Hanuman": "The epitome of devotion, strength and service",
-  "Lord Murugan": "The god of war, victory and wisdom",
-  "Lord Ayyappa": "The deity of dharma and righteousness",
-  "Navagraha": "The nine celestial bodies influencing human life"
-};
-
-export const getDeityImage = (deityName) => {
-  return deityImageMap[deityName] || "https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png";
-};
-
-export const getDeityDescription = (deityName) => {
-  return deityDescriptions[deityName] || "Explore sacred temples";
-};
-
-export const getImageUrl = (imagePath) => {
-  if (!imagePath) {
-    return optimizeCloudinaryUrl('https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png', 800);
-  }
-  
-  if (imagePath.startsWith('http')) {
-    return optimizeCloudinaryUrl(imagePath, 800);
-  }
-  
-  if (imagePath.startsWith('/Temples/')) {
-    return `${window.location.origin}${imagePath}`;
-  }
-  
-  // Use the root base URL (which may be empty for local dev) for image paths
-  return `${API_BASE_URL}${imagePath.startsWith('/') ? imagePath : '/' + imagePath}`;
-};
-
-export const getImageWithFallback = (temple, width = 400) => {
-  if (temple.image && !temple.image.includes('placeholder')) {
-    return optimizeCloudinaryUrl(temple.image, width);
-  }
-
-  if (temple.category && deityImageMap[temple.category]) {
-    return optimizeCloudinaryUrl(deityImageMap[temple.category], width);
-  }
-
-  if (temple.deity && deityImageMap[temple.deity]) {
-    return optimizeCloudinaryUrl(deityImageMap[temple.deity], width);
-  }
-
-  return optimizeCloudinaryUrl("https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png", width);
-};
-
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || `HTTP ${response.status}`);
-  }
-  return response.json();
-};
-
-const createHeaders = (token = null, includeAuth = false) => {
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  if (includeAuth && token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  return headers;
-};
-
-const getSessionId = () => {
-  let sessionId = sessionStorage.getItem('temple_session_id');
-  if (!sessionId) {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    sessionStorage.setItem('temple_session_id', sessionId);
-  }
-  return sessionId;
-};
-
-export const api = {
-  auth: {
-    register: async (name, email, password) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('auth/register'), {
-        method: 'POST',
-        headers: createHeaders(),
-        body: JSON.stringify({ name, email, password })
-      });
-      return handleResponse(response);
-    },
-
-    login: async (email, password) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('auth/login'), {
-        method: 'POST',
-        headers: createHeaders(),
-        body: JSON.stringify({ email, password })
-      });
-      return handleResponse(response);
-    },
-
-    logout: async (token) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('auth/logout'), {
-        method: 'POST',
-        headers: createHeaders(token, true)
-      });
-      return handleResponse(response);
-    },
-
-    getMe: async (token) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('auth/me'), {
-        method: 'GET',
-        headers: createHeaders(token, true)
-      });
-      return handleResponse(response);
-    }
-  },
-
-  temples: {
-    getAll: async () => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('temples'));
-      return handleResponse(response);
-    },
-
-    getFeaturedTemples: async () => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('temples'));
-      return handleResponse(response);
-    },
-
-    getById: async (id) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl(`temples/${id}`));
-      return handleResponse(response);
-    },
-
-    getByDeity: async (deity) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl(`temples/deity/${encodeURIComponent(deity)}`));
-      return handleResponse(response);
-    },
-
-    getByDeityAndCategory: async (deity, category) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl(`temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`));
-      return handleResponse(response);
-    },
-
-    search: async (query, limit = 50) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl(`temples/search?q=${encodeURIComponent(query)}&limit=${limit}`));
-      return handleResponse(response);
-    },
-
-    getDeities: async () => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl('temples/deities'));
-      return handleResponse(response);
-    },
-
-    getDeitiesWithCategories: async (deity) => {
-      // FIX APPLIED
-      const response = await fetch(buildApiUrl(`temples/deities/${encodeURIComponent(deity)}/categories`));
-      return handleResponse(response);
-    }
-  },
-
-  getBucketlist: async (token = null) => {
-    const headers = token 
-      ? createHeaders(token, true)
-      : { ...createHeaders(), 'x-session-id': getSessionId() };
-
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl('bucketlist'), {
-      method: 'GET',
-      headers
-    });
-    return handleResponse(response);
-  },
-
-  addToBucketlist: async (templeId, token = null) => {
-    const headers = token 
-      ? createHeaders(token, true)
-      : { ...createHeaders(), 'x-session-id': getSessionId() };
-
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl('bucketlist'), {
+const authApi = {
+  login: async (email, password) => {
+    // Correct Path: ${BASE_URL}/api/auth/login
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
-      headers,
-      body: JSON.stringify({ templeId })
+      headers: createHeaders(null, true),
+      body: JSON.stringify({ email, password }),
     });
     return handleResponse(response);
   },
 
-  removeFromBucketlist: async (templeId, token = null) => {
-    const headers = token 
-      ? createHeaders(token, true)
-      : { ...createHeaders(), 'x-session-id': getSessionId() };
-
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`bucketlist/${templeId}`), {
-      method: 'DELETE',
-      headers
+  register: async (name, email, password) => {
+    // Correct Path: ${BASE_URL}/api/auth/register
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: createHeaders(null, true),
+      body: JSON.stringify({ name, email, password }),
     });
     return handleResponse(response);
   },
 
-  clearBucketlist: async (token = null) => {
-    const headers = token 
-      ? createHeaders(token, true)
-      : { ...createHeaders(), 'x-session-id': getSessionId() };
+  getMe: async (token) => {
+    // Correct Path: ${BASE_URL}/api/auth/me
+    const response = await fetch(`${BASE_URL}/api/auth/me`, {
+      method: 'GET',
+      headers: createHeaders(token, false),
+    });
+    return handleResponse(response);
+  },
+  
+  logout: async (token) => {
+    // Correct Path: ${BASE_URL}/api/auth/logout
+    const response = await fetch(`${BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        headers: createHeaders(token, false),
+    });
+    return handleResponse(response);
+  }
+};
 
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl('bucketlist'), {
-      method: 'DELETE',
-      headers
+const bucketlistApi = {
+  getBucketlist: async (token) => {
+    const sessionId = getSessionId();
+    // Correct Path: ${BASE_URL}/api/bucketlist
+    const response = await fetch(`${BASE_URL}/api/bucketlist`, {
+      method: 'GET',
+      headers: createHeaders(token, false),
+      // CRITICAL: Ensure sessionId is sent for unauthenticated users if your backend requires it
+      headers: { 
+        ...createHeaders(token, false), 
+        'x-session-id': sessionId 
+      },
     });
     return handleResponse(response);
   },
 
+  // ... other bucketlist methods (addItem, removeItem, checkItem) ...
+  
   migrateBucketlist: async (token) => {
     const sessionId = getSessionId();
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl('bucketlist/migrate'), {
+    // Correct Path: ${BASE_URL}/api/bucketlist/migrate
+    const response = await fetch(`${BASE_URL}/api/bucketlist/migrate`, {
       method: 'POST',
       headers: createHeaders(token, true),
       body: JSON.stringify({ sessionId })
@@ -313,44 +123,45 @@ export const api = {
   }
 };
 
-export const templeApi = {
-  ...api.temples,
+const templeApi = {
+  getDeities: async () => {
+    // Correct Path: ${BASE_URL}/api/temples/deities
+    const response = await fetch(`${BASE_URL}/api/temples/deities`);
+    return handleResponse(response);
+  },
+  
   getGodTemples: async (deity) => {
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`temples/deity/${encodeURIComponent(deity)}`));
+    // Correct Path: ${BASE_URL}/api/temples/deity/:deity
+    const response = await fetch(`${BASE_URL}/api/temples/deity/${encodeURIComponent(deity)}`);
     return handleResponse(response);
   },
   
   getCategoryTemples: async (deity, category) => {
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`));
-    return handleResponse(response);
-  },
-  
-  getAvatarTemples: async (deity, category) => {
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`));
+    // Correct Path: ${BASE_URL}/api/temples/deity/:deity/:category
+    const response = await fetch(`${BASE_URL}/api/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`);
     return handleResponse(response);
   },
 
   getTempleById: async (id) => {
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`temples/${id}`));
+    // Correct Path: ${BASE_URL}/api/temples/:id
+    const response = await fetch(`${BASE_URL}/api/temples/${id}`);
     return handleResponse(response);
   },
 
   searchTemples: async (query, limit = 50) => {
-    // FIX APPLIED
-    const response = await fetch(buildApiUrl(`temples/search?q=${encodeURIComponent(query)}&limit=${limit}`));
+    // Correct Path: ${BASE_URL}/api/temples/search?q=...
+    const response = await fetch(`${BASE_URL}/api/temples/search?q=${encodeURIComponent(query)}&limit=${limit}`);
     return handleResponse(response);
   }
 };
 
-export const bucketlistApi = {
-  getBucketlist: api.getBucketlist,
-  addToBucketlist: api.addToBucketlist,
-  removeFromBucketlist: api.removeFromBucketlist,
-  clearBucketlist: api.clearBucketlist
+
+// Combine all APIs into a single export object
+export const api = {
+  auth: authApi,
+  bucketlist: bucketlistApi,
+  temples: templeApi
 };
 
-export default api;
+// Export the base functions for use in other utilities/components
+export * from './utils/cloudinary'; // Assuming you have your cloudinary utilities in a separate file
