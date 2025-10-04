@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Import all components
@@ -32,23 +32,18 @@ const AppContent = () => {
   const [bucketlist, setBucketlist] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, token, isAuthenticated } = useAuth();
-  const hasLoadedRef = useRef(false);
 
-  // Load bucketlist once on mount
+  // SIMPLIFIED: Load bucketlist once on mount
   useEffect(() => {
-    if (!hasLoadedRef.current) {
-      loadBucketlist();
-      hasLoadedRef.current = true;
-    }
+    loadBucketlist();
   }, []);
 
-  // Reload bucketlist only when user logs in/out
+  // SIMPLIFIED: Reload bucketlist only when auth state changes
   useEffect(() => {
-    if (hasLoadedRef.current && isAuthenticated !== undefined) {
+    if (isAuthenticated !== undefined) {
       loadBucketlist();
     }
   }, [isAuthenticated]);
@@ -60,14 +55,14 @@ const AppContent = () => {
 
   const loadBucketlist = async () => {
     try {
-      setLoading(true);
       const bucketlistData = await api.bucketlist.getBucketlist(token);
       setBucketlist(bucketlistData);
     } catch (error) {
       console.error("Failed to load bucketlist:", error);
-      showNotification('Failed to load your bucketlist', 'error');
-    } finally {
-      setLoading(false);
+      // Don't show error notification on initial load
+      if (bucketlist.length > 0) {
+        showNotification('Failed to load your bucketlist', 'error');
+      }
     }
   };
 
@@ -83,65 +78,74 @@ const AppContent = () => {
     }, 3000);
   };
 
+  // OPTIMIZED: Optimistic update with instant UI feedback
   const handleAddToBucketlist = async (temple) => {
-    if (loading) return; // Prevent double-clicks
+    const templeId = temple.templeId || temple.id;
+    const templeName = temple.templeName || temple.name;
+    
+    // Check FIRST before making API call
+    const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
+    
+    if (isAlreadyInList) {
+      showNotification(`${templeName} is already in your bucketlist.`, 'info');
+      return; // Exit immediately
+    }
     
     try {
-      setLoading(true);
+      // Optimistic update - update UI immediately
+      const optimisticItem = {
+        _id: `temp-${Date.now()}`,
+        templeId,
+        templeName,
+        templeLocation: temple.location || '',
+        templeImage: temple.image || '',
+        deity: temple.deity || '',
+        category: temple.category || '',
+        addedAt: new Date().toISOString()
+      };
       
-      const templeId = temple.templeId || temple.id;
-      const templeName = temple.templeName || temple.name;
+      setBucketlist(prev => [optimisticItem, ...prev]);
+      showNotification(`${templeName} added to your bucketlist!`);
       
-      // Check FIRST before making API call
-      const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
-      
-      if (isAlreadyInList) {
-        showNotification(`${templeName} is already in your bucketlist.`, 'info');
-        setLoading(false);
-        return;
-      }
-      
-      // Add to backend
+      // Then update backend (no loading state needed)
       const newItem = await api.bucketlist.addItem(token, templeId);
       
-      // Update local state immediately (optimistic update)
-      setBucketlist(prev => [newItem, ...prev]);
-      
-      showNotification(`${templeName} added to your bucketlist!`);
+      // Replace optimistic item with real one
+      setBucketlist(prev => 
+        prev.map(item => item._id === optimisticItem._id ? newItem : item)
+      );
       
     } catch (error) {
       console.error('Failed to add to bucketlist:', error);
       
+      // Rollback on error
+      setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
+      
       if (error.message && error.message.includes('already in bucketlist')) {
-        // Reload only if there's a sync issue
-        await loadBucketlist();
-        showNotification(`${temple.templeName || temple.name} is already in your bucketlist.`, 'info');
+        showNotification(`${templeName} is already in your bucketlist.`, 'info');
+        await loadBucketlist(); // Sync state
       } else {
         showNotification('Failed to add temple to bucketlist', 'error');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
+  // OPTIMIZED: Optimistic update with instant UI feedback
   const handleRemoveFromBucketlist = async (templeId) => {
     try {
-      setLoading(true);
-      
-      await api.bucketlist.removeItem(token, templeId);
-      
-      // Update local state immediately (optimistic update)
+      // Optimistic update - remove from UI immediately
+      const removedItem = bucketlist.find(item => item.templeId === templeId);
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
-      
       showNotification('Temple removed from bucketlist.', 'info');
+      
+      // Then update backend
+      await api.bucketlist.removeItem(token, templeId);
       
     } catch (error) {
       console.error('Failed to remove from bucketlist:', error);
       showNotification('Failed to remove temple from bucketlist', 'error');
       // Reload to sync state
       await loadBucketlist();
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -159,20 +163,7 @@ const AppContent = () => {
         onSearch={handleSearch}
       />
 
-<main className="container mx-auto px-4 py-8 flex-grow" style={{ minHeight: 'calc(100vh - 80px - 200px)' }}>  {/* 80px = header, 100px = footer approximate heights */}
-        {loading && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
-            <div className={`px-4 py-2 rounded-lg shadow-lg ${
-              isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-            }`}>
-              <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
-                <span>Loading...</span>
-              </div>
-            </div>
-          </div>
-        )}
-        
+      <main className="container mx-auto px-4 py-8 flex-grow" style={{ minHeight: 'calc(100vh - 80px - 200px)' }}>
         <Routes>
           <Route 
             path="/" 
@@ -222,7 +213,7 @@ const AppContent = () => {
                 bucketlist={bucketlist} 
                 onAdd={handleAddToBucketlist} 
                 onRemove={handleRemoveFromBucketlist} 
-                showNotification={showNotification} // ADD THIS
+                showNotification={showNotification}
               />
             } 
           />

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleTravelPlannerModal from "./SimpleTravelPlannerModal";
-import { getImageWithFallback } from "../services/api"; // ADD THIS IMPORT
+import { getImageWithFallback } from "../services/api";
 
 const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
   const navigate = useNavigate();
@@ -59,14 +59,11 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
     setShowTravelPlanner(true);
   };
 
-  // ADD THIS HELPER FUNCTION
   const getTempleImage = (item) => {
-    // If image exists and is a full URL, use it
     if (item.templeImage && item.templeImage.startsWith('http')) {
       return item.templeImage;
     }
     
-    // Otherwise use fallback based on temple name/location
     return getImageWithFallback({
       image: item.templeImage,
       name: item.templeName,
@@ -143,7 +140,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
                 className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity duration-300"
                 onClick={() => navigate(`/temple/${item.templeId}`)}
                 onError={(e) => {
-                  // UPDATED: Fallback if image fails to load
                   e.target.src = 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png';
                 }}
               />
