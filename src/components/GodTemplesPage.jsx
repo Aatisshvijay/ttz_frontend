@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../services/api";  // ADD THIS IMPORT
+import { api } from "../services/api";
 import OptimizedImage from "./OptimizedImage";
 
 const GodTemplesPage = ({ isDarkMode }) => {
@@ -17,14 +17,8 @@ const GodTemplesPage = ({ isDarkMode }) => {
       setLoading(true);
       setError(null);
       try {
-        console.log("GodTemplesPage: Fetching data for:", godName);
-        
-        // CHANGED: Use api.temples.getDeityCategories instead of direct fetch
         const categoryData = await api.temples.getDeityCategories(godName);
         
-        console.log("GodTemplesPage: Categories Response:", categoryData);
-        
-        // Rest of your code stays the same...
         const vishnuCategoryOrder = ['Vishnu (108 Divya Desams)', 'Matsya Avatar', 'Kurma Avatar', 'Lord Varaha', 'Lord Narasimha', 'Lord Vamana', 'Lord Parshuram', 'Lord Sri Rama', 'Lord Krishna'];
         let transformedCategories = categoryData.map((category) => ({
           name: category.name,
@@ -59,9 +53,7 @@ const GodTemplesPage = ({ isDarkMode }) => {
     if (godName) fetchData();
   }, [godName]);
 
-  // Rest of your component stays exactly the same...
-
-  const getCategoryDescription = (category, deity) => {
+  const getCategoryDescription = useCallback((category, deity) => {
     const descriptions = { 
       "Vishnu (108 Divya Desams)": "The 108 most sacred temples of Lord Vishnu across India", 
       "Matsya Avatar": "Temples dedicated to the Fish incarnation that saved the world from the great flood", 
@@ -84,36 +76,45 @@ const GodTemplesPage = ({ isDarkMode }) => {
       "Ganesha Temples": "Temples dedicated to the remover of obstacles" 
     };
     return descriptions[category] || `Sacred temples dedicated to ${deity}`;
-  };
+  }, []);
+
+  const handleCategoryClick = useCallback((categoryName) => {
+    navigate(`/god/${encodeURIComponent(godName)}/${encodeURIComponent(categoryName)}`);
+  }, [godName, navigate]);
+
+  const shouldEagerLoad = useCallback((index) => index < 3, []);
 
   if (loading) return <div className="flex items-center justify-center py-16"><div className={`text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>Loading temple categories for {godName}...</div></div>;
   if (error) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Error Loading Data</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{error}</p><div className="space-x-4"><button onClick={() => window.location.reload()} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-orange-600 text-white hover:bg-orange-500" : "bg-orange-500 text-white hover:bg-orange-600"}`}>Retry</button><button onClick={() => navigate("/")} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-500 text-white hover:bg-gray-600"}`}>Go to Home</button></div></div>;
   if (categories.length === 0) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>No temple categories found for "{godName}"</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>The deity "{godName}" could not be found in our database, or no temples are available.</p></div>;
 
   const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 will-change-transform ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
-  const shouldEagerLoad = (index) => index < 3;
 
   return (
     <div className="py-8">
       <h1 className={`text-4xl md:text-5xl font-bold mb-4 text-center ${isDarkMode ? "text-white" : "text-gray-900"}`}>{godName}</h1>
       <p className={`text-lg text-center mb-8 max-w-2xl mx-auto ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>Explore the sacred temples and spiritual destinations dedicated to {godName}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-75ms">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {categories.map((category, index) => (
           <div
             key={category.name || index}
-            onClick={() => navigate(`/god/${encodeURIComponent(godName)}/${encodeURIComponent(category.name)}`)}
-            className={`${cardClass} stagger-card-base stagger-card-d500 ${showCategories ? 'is-visible' : ''}`}
+            onClick={() => handleCategoryClick(category.name)}
+            className={`${cardClass} ${showCategories ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            style={{ 
+              transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+              transitionDelay: `${index * 75}ms`,
+              minHeight: '400px'
+            }}
           >
-            {/* // Before: className="w-full h-48 object-cover" */}
-<OptimizedImage
-  src={category.image}
-  alt={category.name}
-  // FIX: Removed h-48 as OptimizedImage now manages vertical space via aspect ratio
-  className="w-full object-cover rounded-t-xl" 
-  width={400}
-  height={192} // 400x192 is the aspect ratio used to calculate space
-  eagerLoad={shouldEagerLoad(index)}
-/>
+            <OptimizedImage
+              src={category.image}
+              alt={category.name}
+              className="rounded-t-xl" 
+              width={400}
+              height={192}
+              eagerLoad={shouldEagerLoad(index)}
+              isDarkMode={isDarkMode}
+            />
             <div className="p-6">
               <h2 className={`text-xl font-bold mb-3 ${isDarkMode ? "text-white" : "text-gray-900"}`}>{category.name}</h2>
               {category.description && <p className={`text-sm mb-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.description}</p>}

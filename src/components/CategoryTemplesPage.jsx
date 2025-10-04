@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api, getImageWithFallback } from '../services/api';
 import OptimizedImage from './OptimizedImage';
@@ -35,6 +35,11 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
     if (godName && categoryName) fetchData();
   }, [godName, categoryName]);
 
+  // Added useCallback for the click handler
+  const handleTempleClick = useCallback((templeId) => {
+    navigate(`/temple/${templeId}`);
+  }, [navigate]);
+
   if (loading) return <div className="flex items-center justify-center py-16"><div className={`text-xl ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Loading temples for "{categoryName}"...</div></div>;
   if (error || temples.length === 0) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{error || 'No temples found for this category.'}</h2><p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>The divine shrines are yet to be added or the data is unavailable.</p></div>;
   
@@ -47,8 +52,15 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
         {temples.map((temple, index) => (
           <div
             key={temple.id || temple._id}
-            onClick={() => navigate(`/temple/${temple.id || temple._id}`)}
+            // Updated to use useCallback handler
+            onClick={() => handleTempleClick(temple.id || temple._id)}
             className={`${cardClass} stagger-card-base stagger-card-d500 ${showTemples ? 'is-visible' : ''}`}
+            // Added minHeight for uniform card size
+            style={{ 
+              transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+              transitionDelay: `${index * 75}ms`,
+              minHeight: '400px'
+            }}
           >
             {/* // Before: className="w-full h-48 object-cover rounded-t-xl" */}
 <OptimizedImage 
