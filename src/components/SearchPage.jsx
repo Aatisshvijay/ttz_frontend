@@ -46,7 +46,7 @@ const SearchPage = ({ isDarkMode }) => {
       setLoading(true);
       setError(null);
       console.log('Searching for:', searchQuery);
-      const searchResults = await templeApi.searchTemples(searchQuery);
+const searchResults = await api.temples.searchTemples(searchQuery);
       console.log('Search results:', searchResults);
       setResults(searchResults || []);
     } catch (error) {

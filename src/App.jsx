@@ -39,9 +39,8 @@ const AppContent = () => {
 
   useEffect(() => {
     loadBucketlist();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token]);
 
-  // Debug current route
   useEffect(() => {
     console.log('Current route:', location.pathname);
     console.log('Current search:', location.search);
@@ -50,7 +49,7 @@ const AppContent = () => {
   const loadBucketlist = async () => {
     try {
       setLoading(true);
-      const bucketlistData = await api.getBucketlist(token);
+      const bucketlistData = await api.bucketlist.getBucketlist(token); // FIXED
       setBucketlist(bucketlistData);
     } catch (error) {
       console.error("Failed to load bucketlist:", error);
@@ -76,20 +75,20 @@ const AppContent = () => {
     try {
       setLoading(true);
       
-      const isAlreadyInBucketlist = bucketlist.some(item => item.templeId === temple.id);
+      const isAlreadyInBucketlist = bucketlist.some(item => item.templeId === temple.templeId);
       if (isAlreadyInBucketlist) {
-        showNotification(`${temple.name} is already in your bucketlist.`, 'info');
+        showNotification(`${temple.templeName} is already in your bucketlist.`, 'info');
         return;
       }
 
-      const newItem = await api.addToBucketlist(temple.id, token);
-      setBucketlist(prev => [...prev, newItem]);
-      showNotification(`${temple.name} added to your bucketlist!`);
+      await api.bucketlist.addItem(token, temple.templeId); // FIXED
+      setBucketlist(prev => [...prev, temple]);
+      showNotification(`${temple.templeName} added to your bucketlist!`);
       
     } catch (error) {
       console.error('Failed to add to bucketlist:', error);
       if (error.message.includes('already in bucketlist')) {
-        showNotification(`${temple.name} is already in your bucketlist.`, 'info');
+        showNotification(`Temple is already in your bucketlist.`, 'info');
       } else {
         showNotification('Failed to add temple to bucketlist', 'error');
       }
@@ -102,7 +101,7 @@ const AppContent = () => {
     try {
       setLoading(true);
       
-      await api.removeFromBucketlist(templeId, token);
+      await api.bucketlist.removeItem(token, templeId); // FIXED
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
       showNotification('Temple removed from bucketlist.', 'info');
       
@@ -143,7 +142,6 @@ const AppContent = () => {
         )}
         
         <Routes>
-          {/* Home Route */}
           <Route 
             path="/" 
             element={
@@ -154,7 +152,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* Search Route - MUST come before /god routes to avoid conflicts */}
           <Route 
             path="/search" 
             element={
@@ -165,7 +162,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* Login Route */}
           <Route 
             path="/login" 
             element={
@@ -175,7 +171,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* Bucketlist Route */}
           <Route 
             path="/bucketlist" 
             element={
@@ -187,7 +182,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* Temple Details Route - Should come before other god routes */}
           <Route 
             path="/temple/:templeId" 
             element={
@@ -200,7 +194,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* God Category Route - MUST come before /god/:godName */}
           <Route 
             path="/god/:godName/:categoryName" 
             element={
@@ -210,7 +203,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* God Overview Route - MUST come last among god routes */}
           <Route 
             path="/god/:godName" 
             element={
@@ -220,7 +212,6 @@ const AppContent = () => {
             } 
           />
           
-          {/* Catch all route for 404 */}
           <Route 
             path="*" 
             element={
