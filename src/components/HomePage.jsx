@@ -41,9 +41,9 @@ const HomePage = ({ isDarkMode, navigate }) => {
   }, []);
 
   const DeityCardSkeleton = () => (
-    <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse h-[320px] ${
+    <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse ${
       isDarkMode ? "bg-gray-800" : "bg-white"
-    }`}>
+    }`} style={{ minHeight: '320px' }}>
       <div className={`w-24 h-24 rounded-2xl mb-4 ${
         isDarkMode ? "bg-gray-700" : "bg-gray-200"
       }`}></div>
@@ -124,21 +124,12 @@ const HomePage = ({ isDarkMode, navigate }) => {
   if (loading) {
     return (
       <div>
-        {/* Welcome Section with fixed height */}
-        <div 
-          className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
-            isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-          } text-white`} 
-          style={{ height: '300px' }}
-        >
+        {/* Welcome Section - FIXED: Added minHeight */}
+        <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
+          isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
+        } text-white`} style={{ minHeight: '300px' }}>
           <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-            <img 
-              src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" 
-              className="max-h-40 w-auto" 
-              alt="Namaste"
-              width="160"
-              height="160"
-            />
+            <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
           </h1>
           <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
           <p className="text-xl md:text-2xl text-center opacity-90">
@@ -146,17 +137,17 @@ const HomePage = ({ isDarkMode, navigate }) => {
           </p>
         </div>
 
-        {/* Stats Section with fixed heights */}
+        {/* Stats Section - FIXED: Added minHeight to each card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">250+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
           </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">25+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
           </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">5000+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
           </div>
@@ -164,10 +155,10 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
         <Gita isDarkMode={isDarkMode} />
 
-        {/* Loading indicator with fixed height */}
-        <div className="text-center mb-8 h-[120px] flex flex-col justify-center">
+        {/* Loading indicator */}
+        <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4">Loading Divine Journeys...</h2>
-          <div className={`w-full max-w-md mx-auto rounded-full h-2 mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
+          <div className={`w-full max-w-md mx-auto bg-gray-200 rounded-full h-2 mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
             <div 
               className="bg-orange-500 h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${loadingProgress}%` }}
@@ -178,8 +169,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
           </p>
         </div>
 
-        {/* Fixed height grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[1040px]">
+        {/* FIXED: Added minHeight to grid container */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" style={{ minHeight: '1000px' }}>
           {Array.from({ length: 9 }).map((_, index) => (
             <DeityCardSkeleton key={index} />
           ))}
@@ -190,7 +181,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
   if (error) {
     return (
-      <div className="text-center py-12 min-h-[600px] flex flex-col justify-center">
+      <div className="text-center py-12">
         <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
           Error Loading Data
         </h2>
@@ -213,21 +204,12 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
   return (
     <div>
-      {/* Welcome Section with fixed height */}
-      <div 
-        className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
-          isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-        } text-white`}
-        style={{ height: '300px' }}
-      >
+      {/* Welcome Section - FIXED: Added minHeight */}
+      <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
+        isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
+      } text-white`} style={{ minHeight: '300px' }}>
         <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-          <img 
-            src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" 
-            className="max-h-40 w-auto" 
-            alt="Namaste"
-            width="160"
-            height="160"
-          />
+          <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
         </h1>
         <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
         <p className="text-xl md:text-2xl text-center opacity-90">
@@ -235,17 +217,17 @@ const HomePage = ({ isDarkMode, navigate }) => {
         </p>
       </div>
 
-      {/* Stats Section with fixed heights */}
+      {/* Stats Section - FIXED: Added minHeight */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">250+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
         </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">25+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
         </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">5000+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
         </div>
@@ -253,15 +235,14 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      {/* Title section with fixed height */}
-      <div className="text-center mb-12 h-[80px] flex items-center justify-center">
-        <h2 className="text-3xl font-bold">
+      {/* Deities Grid - FIXED: Removed showDeities state, added minHeight */}
+      <div className="text-center mb-12" style={{ minHeight: '80px' }}>
+        <h2 className="text-3xl font-bold mb-8 text-center">
           Choose Your Divine Journey
         </h2>
       </div>
       
-      {/* Fixed height grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[1040px] stagger-container-100ms">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-100ms" style={{ minHeight: '1000px' }}>
         {availableDeities.map((deityName) => (
           <div
             key={deityName}
@@ -275,16 +256,14 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 navigate(`/god/${encodeURIComponent(deityName)}`);
               }
             }}
-            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base h-[320px]`}
+            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base`}
+            style={{ minHeight: '320px' }}
           >
-            {/* CRITICAL: Fixed aspect ratio container for image */}
-            <div className="w-24 h-24 mb-4 group-hover:scale-110 transition-transform duration-300 rounded-2xl flex items-center justify-center overflow-hidden bg-gray-100">
+            <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 rounded-2xl">
               <img
                 src={getDeityImage(deityName)}
                 alt={deityName}
-                className="object-cover w-full h-full rounded-2xl"
-                width="96"
-                height="96"
+                className="object-contain max-h-full max-w-full rounded-2xl"
                 loading="lazy"
                 onError={(e) => {
                   console.log(`Image failed for ${deityName}, using fallback`);
