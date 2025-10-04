@@ -243,7 +243,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      <div className="text-center mb-5" style={{ minHeight: '80px' }}>
+      <div className="text-center mb-4" style={{ minHeight: '80px' }}>
         <h2 className="text-3xl font-bold mb-8 text-center">
           Choose Your Divine Journey
         </h2>
