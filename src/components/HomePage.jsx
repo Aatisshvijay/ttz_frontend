@@ -17,18 +17,19 @@ const HomePage = ({ isDarkMode, navigate }) => {
         
         if (data && data.length > 0) {
           // Preload first 3 images (visible on load)
-          const visiblePromises = data.slice(0, 3).map(deity => {
+          const visiblePromises = transformedCategories.slice(0, 3).map(category => {
             return new Promise((resolve) => {
-              if (deity.image) {
+              if (category.image) {
                 const img = new Image();
                 img.onload = resolve;
-                img.onerror = resolve;
-                img.src = deity.image;
+                // Resolve on error too, so a single broken image doesn't block the UI
+                img.onerror = resolve; 
+                img.src = category.image;
               } else {
                 resolve();
               }
             });
-          });
+        });
           
           await Promise.all(visiblePromises);
           setDeities(data);
@@ -232,7 +233,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      <div className="text-center mb-6" style={{ minHeight: '80px' }}>
+      <div className="text-center mb-5" style={{ minHeight: '80px' }}>
         <h2 className="text-3xl font-bold mb-8 text-center">
           Choose Your Divine Journey
         </h2>
