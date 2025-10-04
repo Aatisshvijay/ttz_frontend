@@ -232,7 +232,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      <div className="text-center mb-12" style={{ minHeight: '80px' }}>
+      <div className="text-center mb-6" style={{ minHeight: '80px' }}>
         <h2 className="text-3xl font-bold mb-8 text-center">
           Choose Your Divine Journey
         </h2>
@@ -261,10 +261,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 alt={deityName}
                 className="object-contain max-h-full max-w-full rounded-2xl"
                 loading="lazy"
-                onError={(e) => {
-                  console.log(`Image failed for ${deityName}, using fallback`);
-                  e.target.src = "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop";
-                }}
+                
               />
             </div>
             <h2 className="text-2xl font-bold mb-2">{deityName}</h2>
