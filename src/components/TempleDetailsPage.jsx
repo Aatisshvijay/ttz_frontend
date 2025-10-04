@@ -149,33 +149,38 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
 
   const isInBucketlist = bucketlist.some((item) => item.templeId === temple.id);
 
-  // REPLACE THE ENTIRE handleBucketlistToggle FUNCTION:
-  const handleBucketlistToggle = async () => {
-    if (bucketlistLoading) return; // Prevent double clicks
-    
-    setBucketlistLoading(true);
-    try {
-      if (isInBucketlist) {
-        await api.bucketlist.removeItem(token, temple.id);
-        onRemove(temple.id); // Update parent state
-      } else {
-        await api.bucketlist.addItem(token, temple.id);
-        // Create bucketlist item object for parent state
-        const bucketlistItem = {
-          templeId: temple.id,
-          templeName: temple.name,
-          templeLocation: temple.location,
-          templeImage: temple.image
-        };
-        onAdd(bucketlistItem);
+const handleBucketlistToggle = async () => {
+  if (bucketlistLoading) return;
+  
+  setBucketlistLoading(true);
+  try {
+    if (isInBucketlist) {
+      await api.bucketlist.removeItem(token, temple.id);
+      onRemove(temple.id);
+    } else {
+      await api.bucketlist.addItem(token, temple.id);
+      
+      // Fetch the actual item from backend to get correct data
+      const updatedBucketlist = await api.bucketlist.getBucketlist(token);
+      const addedItem = updatedBucketlist.find(item => item.templeId === temple.id);
+      
+      if (addedItem) {
+        onAdd(addedItem); // Pass the actual backend item
       }
-    } catch (error) {
-      console.error('Failed to update bucketlist:', error);
-      alert('Failed to update bucketlist. Please try again.');
-    } finally {
-      setBucketlistLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Failed to update bucketlist:', error);
+    
+    // Don't show "already in bucketlist" if it's actually in the list
+    if (error.message && error.message.includes('already in bucketlist')) {
+      // Just silently ignore - it's already there
+      return;
+    }
+    alert('Failed to update bucketlist. Please try again.');
+  } finally {
+    setBucketlistLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen py-8">
