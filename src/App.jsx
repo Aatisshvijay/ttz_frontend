@@ -222,6 +222,7 @@ const AppContent = () => {
                 bucketlist={bucketlist} 
                 onAdd={handleAddToBucketlist} 
                 onRemove={handleRemoveFromBucketlist} 
+                showNotification={showNotification} // ADD THIS
               />
             } 
           />

@@ -86,7 +86,7 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   );
 };
 
-const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
+  const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove, showNotification }) => {
   const { templeId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth(); // ADD THIS LINE
@@ -159,29 +159,35 @@ const handleBucketlistToggle = async () => {
       // Remove
       await api.bucketlist.removeItem(token, temple.id);
       onRemove(temple.id);
+      
+      // Show notification for removal
+      showNotification(`${temple.name} removed from bucketlist`, 'info');
     } else {
       // Check before adding
       if (bucketlist.some(item => item.templeId === temple.id)) {
         setBucketlistLoading(false);
-        return; // Already there, do nothing
+        return;
       }
       
       // Add to backend
       const newItem = await api.bucketlist.addItem(token, temple.id);
       onAdd(newItem);
+      
+      // Show notification for adding
+      showNotification(`${temple.name} added to your bucketlist!`, 'success');
     }
   } catch (error) {
     console.error('Failed to update bucketlist:', error);
     
-    // Silent handling for duplicate errors
     if (error.message && error.message.includes('already in bucketlist')) {
       const updatedBucketlist = await api.bucketlist.getBucketlist(token);
       const existingItem = updatedBucketlist.find(item => item.templeId === temple.id);
       if (existingItem) {
         onAdd(existingItem);
       }
+      showNotification(`${temple.name} is already in your bucketlist`, 'info');
     } else {
-      alert('Failed to update bucketlist. Please try again.');
+      showNotification('Failed to update bucketlist', 'error');
     }
   } finally {
     setBucketlistLoading(false);
