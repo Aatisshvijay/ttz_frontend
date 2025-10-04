@@ -122,21 +122,27 @@ const TempleDetailsPage = ({
     loadTemple();
   }, [templeId]);
 
-  const loadTemple = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      setImageLoaded(false);
-      const templeData = await api.temples.getTempleById(templeId);
-      setTemple(templeData);
-      setTimeout(() => setShowContent(true), 50);
-    } catch (error) {
-      console.error("Error fetching temple:", error);
-      setError("Temple not found");
-    } finally {
-      setLoading(false);
-    }
-  };
+const loadTemple = async () => {
+  try {
+    setLoading(true);
+    setError(null);
+    setImageLoaded(false);
+    const templeData = await api.temples.getTempleById(templeId);
+    
+    // Preload temple image
+    const img = new Image();
+    img.src = getImageUrl(templeData.image);
+    img.onload = () => setImageLoaded(true);
+    
+    setTemple(templeData);
+    setTimeout(() => setShowContent(true), 50);
+  } catch (error) {
+    console.error("Error fetching temple:", error);
+    setError("Temple not found");
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading) {
     return (
@@ -206,7 +212,7 @@ const TempleDetailsPage = ({
   };
 
   return (
-  <div className="max-w-7xl mx-auto" style={{ minHeight: '900px' }}> // ADD THIS
+  <div className="max-w-7xl mx-auto" style={{ minHeight: '900px' }}> 
       <div className="max-w-7xl mx-auto" style={{ minHeight: "800px" }}>
         <div className="flex flex-col lg:flex-row lg:space-x-12 items-start">
           <div
