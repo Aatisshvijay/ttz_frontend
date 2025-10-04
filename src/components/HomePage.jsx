@@ -41,9 +41,9 @@ const HomePage = ({ isDarkMode, navigate }) => {
   }, []);
 
   const DeityCardSkeleton = () => (
-    <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse ${
+    <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse h-[320px] ${
       isDarkMode ? "bg-gray-800" : "bg-white"
-    }`} style={{ minHeight: '320px' }}>
+    }`}>
       <div className={`w-24 h-24 rounded-2xl mb-4 ${
         isDarkMode ? "bg-gray-700" : "bg-gray-200"
       }`}></div>
@@ -121,44 +121,49 @@ const HomePage = ({ isDarkMode, navigate }) => {
     return descriptions[deityName] || "Sacred temples and spiritual destinations";
   };
 
+  // Common JSX sections to avoid duplication
+  const WelcomeSection = () => (
+    <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br h-[300px] ${
+      isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
+    } text-white`}>
+      <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
+        <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
+      </h1>
+      <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
+      <p className="text-xl md:text-2xl text-center opacity-90">
+        Your spiritual journey starts here. Ready to find your next sacred vibe?
+      </p>
+    </div>
+  );
+
+  const StatsSection = () => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className="text-2xl font-bold text-orange-500">250+</div>
+        <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
+      </div>
+      <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className="text-2xl font-bold text-orange-500">25+</div>
+        <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
+      </div>
+      <div className={`text-center p-6 rounded-2xl shadow-lg h-[100px] flex flex-col justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className="text-2xl font-bold text-orange-500">5000+</div>
+        <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div>
-        {/* Welcome Section - FIXED: Added minHeight */}
-        <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
-          isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-        } text-white`} style={{ minHeight: '300px' }}>
-          <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-            <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
-          </h1>
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
-          <p className="text-xl md:text-2xl text-center opacity-90">
-            Your spiritual journey starts here. Ready to find your next sacred vibe?
-          </p>
-        </div>
-
-        {/* Stats Section - FIXED: Added minHeight to each card */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-            <div className="text-2xl font-bold text-orange-500">250+</div>
-            <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
-          </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-            <div className="text-2xl font-bold text-orange-500">25+</div>
-            <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
-          </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-            <div className="text-2xl font-bold text-orange-500">5000+</div>
-            <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
-          </div>
-        </div>
-
+        <WelcomeSection />
+        <StatsSection />
         <Gita isDarkMode={isDarkMode} />
 
-        {/* Loading indicator */}
-        <div className="text-center mb-8">
+        {/* Loading indicator with fixed height */}
+        <div className="text-center mb-8 h-[80px] flex flex-col justify-center">
           <h2 className="text-3xl font-bold mb-4">Loading Divine Journeys...</h2>
-          <div className={`w-full max-w-md mx-auto bg-gray-200 rounded-full h-2 mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
+          <div className={`w-full max-w-md mx-auto rounded-full h-2 mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
             <div 
               className="bg-orange-500 h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${loadingProgress}%` }}
@@ -169,8 +174,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
           </p>
         </div>
 
-        {/* FIXED: Added minHeight to grid container */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" style={{ minHeight: '1000px' }}>
+        {/* Fixed height grid to prevent layout shift */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[1040px]">
           {Array.from({ length: 9 }).map((_, index) => (
             <DeityCardSkeleton key={index} />
           ))}
@@ -181,7 +186,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
   if (error) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 min-h-[600px] flex flex-col justify-center">
         <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
           Error Loading Data
         </h2>
@@ -204,45 +209,19 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
   return (
     <div>
-      {/* Welcome Section - FIXED: Added minHeight */}
-      <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
-        isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-      } text-white`} style={{ minHeight: '300px' }}>
-        <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-          <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
-        </h1>
-        <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
-        <p className="text-xl md:text-2xl text-center opacity-90">
-          Your spiritual journey starts here. Ready to find your next sacred vibe?
-        </p>
-      </div>
-
-      {/* Stats Section - FIXED: Added minHeight */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-          <div className="text-2xl font-bold text-orange-500">250+</div>
-          <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
-        </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-          <div className="text-2xl font-bold text-orange-500">25+</div>
-          <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
-        </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-          <div className="text-2xl font-bold text-orange-500">5000+</div>
-          <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
-        </div>
-      </div>
-
+      <WelcomeSection />
+      <StatsSection />
       <Gita isDarkMode={isDarkMode} />
 
-      {/* Deities Grid - FIXED: Removed showDeities state, added minHeight */}
-      <div className="text-center mb-12" style={{ minHeight: '80px' }}>
-        <h2 className="text-3xl font-bold mb-8 text-center">
+      {/* Fixed height for title section */}
+      <div className="text-center mb-12 h-[80px] flex items-center justify-center">
+        <h2 className="text-3xl font-bold">
           Choose Your Divine Journey
         </h2>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-100ms" style={{ minHeight: '1000px' }}>
+      {/* Fixed minimum height grid to prevent CLS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[1040px] stagger-container-100ms">
         {availableDeities.map((deityName) => (
           <div
             key={deityName}
@@ -256,8 +235,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 navigate(`/god/${encodeURIComponent(deityName)}`);
               }
             }}
-            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base`}
-            style={{ minHeight: '320px' }}
+            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base h-[320px]`}
           >
             <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 rounded-2xl">
               <img
@@ -265,6 +243,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 alt={deityName}
                 className="object-contain max-h-full max-w-full rounded-2xl"
                 loading="lazy"
+                width="96"
+                height="96"
                 onError={(e) => {
                   console.log(`Image failed for ${deityName}, using fallback`);
                   e.target.src = "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop";
