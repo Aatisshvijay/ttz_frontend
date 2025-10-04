@@ -36,9 +36,11 @@ const OptimizedImage = ({
     const optimizedUrl = useMemo(() => optimizeCloudinaryUrl(src || DEFAULT_FALLBACK_URL, width), [src, width]);
     const blurPlaceholderUrl = useMemo(() => getBlurPlaceholder(src || DEFAULT_FALLBACK_URL), [src]);
     const srcSet = useMemo(() => [400, 800, 1200].map(w => `${optimizeCloudinaryUrl(src || DEFAULT_FALLBACK_URL, w)} ${w}w`).join(', '), [src]);
-    const aspectRatioPadding = useMemo(() => {
-        if (!width || !height || width <= 0 || height <= 0) return 0;
-        return (height / width) * 100;
+    
+    // Calculate aspect ratio - FIXED
+    const aspectRatio = useMemo(() => {
+        if (!width || !height || width <= 0 || height <= 0) return '16 / 9'; // Default fallback
+        return `${width} / ${height}`;
     }, [width, height]);
 
     // Preload image for eager loading
@@ -65,24 +67,23 @@ const OptimizedImage = ({
     return (
         <div 
             className={`relative w-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
-            style={{ paddingBottom: `${aspectRatioPadding}%` }}
+            style={{ 
+                aspectRatio: aspectRatio,
+                minHeight: '192px' // Prevent collapse during load
+            }}
         >
             {/* Blur Placeholder */}
             {blurPlaceholderUrl && !imageLoaded && !imageError && (
                 <img
                     src={blurPlaceholderUrl}
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{ aspectRatio: aspectRatio }}
                     aria-hidden="true"
                 />
             )}
 
-            {/* Loading Spinner */}
-            {!imageLoaded && !imageError && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-300 border-t-orange-500"></div>
-                </div>
-            )}
+            {/* Loading Spinner - Removed to reduce CLS */}
             
             {/* Error State */}
             {imageError && (
@@ -101,7 +102,8 @@ const OptimizedImage = ({
                     alt={alt}
                     srcSet={srcSet}
                     sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
-                    className={`${className} absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`${className} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ aspectRatio: aspectRatio }}
                     width={width}
                     height={height}
                     loading={eagerLoad ? "eager" : "lazy"}

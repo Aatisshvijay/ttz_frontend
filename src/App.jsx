@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Import all components
@@ -36,10 +36,22 @@ const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, token, isAuthenticated } = useAuth();
+  const hasLoadedRef = useRef(false);
 
+  // Load bucketlist once on mount
   useEffect(() => {
-    loadBucketlist();
-  }, [isAuthenticated, token]);
+    if (!hasLoadedRef.current) {
+      loadBucketlist();
+      hasLoadedRef.current = true;
+    }
+  }, []);
+
+  // Reload bucketlist only when user logs in/out
+  useEffect(() => {
+    if (hasLoadedRef.current && isAuthenticated !== undefined) {
+      loadBucketlist();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     console.log('Current route:', location.pathname);
@@ -71,67 +83,67 @@ const AppContent = () => {
     }, 3000);
   };
 
-// Replace the handleAddToBucketlist function in App.jsx with this:
-
-const handleAddToBucketlist = async (temple) => {
-  if (loading) return; // Prevent double-clicks
-  
-  try {
-    setLoading(true);
+  const handleAddToBucketlist = async (temple) => {
+    if (loading) return; // Prevent double-clicks
     
-    const templeId = temple.templeId || temple.id;
-    const templeName = temple.templeName || temple.name;
-    
-    // Check FIRST before making API call
-    const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
-    
-    if (isAlreadyInList) {
-      showNotification(`${templeName} is already in your bucketlist.`, 'info');
+    try {
+      setLoading(true);
+      
+      const templeId = temple.templeId || temple.id;
+      const templeName = temple.templeName || temple.name;
+      
+      // Check FIRST before making API call
+      const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
+      
+      if (isAlreadyInList) {
+        showNotification(`${templeName} is already in your bucketlist.`, 'info');
+        setLoading(false);
+        return;
+      }
+      
+      // Add to backend
+      const newItem = await api.bucketlist.addItem(token, templeId);
+      
+      // Update local state immediately (optimistic update)
+      setBucketlist(prev => [newItem, ...prev]);
+      
+      showNotification(`${templeName} added to your bucketlist!`);
+      
+    } catch (error) {
+      console.error('Failed to add to bucketlist:', error);
+      
+      if (error.message && error.message.includes('already in bucketlist')) {
+        // Reload only if there's a sync issue
+        await loadBucketlist();
+        showNotification(`${temple.templeName || temple.name} is already in your bucketlist.`, 'info');
+      } else {
+        showNotification('Failed to add temple to bucketlist', 'error');
+      }
+    } finally {
       setLoading(false);
-      return;
     }
-    
-    // Add to backend
-    const newItem = await api.bucketlist.addItem(token, templeId);
-    
-    // Update local state immediately (optimistic update)
-    setBucketlist(prev => [newItem, ...prev]);
-    
-    showNotification(`${templeName} added to your bucketlist!`);
-    
-  } catch (error) {
-    console.error('Failed to add to bucketlist:', error);
-    
-    if (error.message && error.message.includes('already in bucketlist')) {
-      // Reload only if there's a sync issue
-      await loadBucketlist();
-      showNotification(`${temple.templeName || temple.name} is already in your bucketlist.`, 'info');
-    } else {
-      showNotification('Failed to add temple to bucketlist', 'error');
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-const handleRemoveFromBucketlist = async (templeId) => {
-  try {
-    setLoading(true);
-    
-    await api.bucketlist.removeItem(token, templeId);
-    
-    // Reload the entire bucketlist from backend
-    await loadBucketlist();
-    
-    showNotification('Temple removed from bucketlist.', 'info');
-    
-  } catch (error) {
-    console.error('Failed to remove from bucketlist:', error);
-    showNotification('Failed to remove temple from bucketlist', 'error');
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleRemoveFromBucketlist = async (templeId) => {
+    try {
+      setLoading(true);
+      
+      await api.bucketlist.removeItem(token, templeId);
+      
+      // Update local state immediately (optimistic update)
+      setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
+      
+      showNotification('Temple removed from bucketlist.', 'info');
+      
+    } catch (error) {
+      console.error('Failed to remove from bucketlist:', error);
+      showNotification('Failed to remove temple from bucketlist', 'error');
+      // Reload to sync state
+      await loadBucketlist();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = (query) => {
     console.log('Navigating to search with query:', query);
