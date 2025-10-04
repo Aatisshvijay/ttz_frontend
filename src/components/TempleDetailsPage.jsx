@@ -1,35 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { api, getImageUrl } from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { useAuth } from "../context/AuthContext"; // ADD THIS IMPORT
 
 const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   const [mapError, setMapError] = useState(false);
   
-  // Use HTTPS and the standard Google Maps query format
   const searchQuery = encodeURIComponent(templeName + ' ' + location);
-
-  // Corrected Google Maps Search URL (for View Full Map/Fallback Link)
   const googleMapsSearchUrl = `https://maps.google.com/?q=${searchQuery}`;
-  
-  // Corrected Google Maps Embed Link URL (can be the same as search for consistency)
-  const googleMapsEmbedLinkUrl = googleMapsSearchUrl;
-  
-  // Corrected Google Maps Directions URL
   const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${searchQuery}`;
-
-  // Corrected Iframe Source URL (Use the embed endpoint)
   const mapIframeSrc = `https://maps.google.com/maps?q=${searchQuery}&output=embed&z=15&iwloc=near&hl=en`;
 
   return (
     <div className="w-full space-y-3">
-      {/* Simple Map Container */}
       <div className="w-full h-48 sm:h-56 md:h-64 lg:h-72 rounded-lg overflow-hidden shadow-lg relative bg-gray-200">
         
-        {/* Try Google Maps Embed first (most reliable) */}
         {!mapError ? (
           <iframe
-            // Uses corrected Iframe Source URL
             src={mapIframeSrc}
             width="100%"
             height="100%"
@@ -37,12 +24,10 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
             loading="lazy"
             title={`Map of ${templeName}`}
             className="rounded-lg"
-            // Note: The onError is still correct for handling map service failure
             onError={() => setMapError(true)} 
             referrerPolicy="no-referrer-when-downgrade"
           />
         ) : (
-          /* Fallback static content with links */
           <div className={`w-full h-full flex flex-col items-center justify-center p-4 ${
             isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'
           }`}>
@@ -53,7 +38,6 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
               
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <a 
-                  // Uses corrected search URL
                   href={googleMapsSearchUrl} 
                   target="_blank"
                   rel="noopener noreferrer"
@@ -61,13 +45,11 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
                 >
                   🗺️ Google Maps
                 </a>
-                
               </div>
             </div>
           </div>
         )}
         
-        {/* Simple overlay with temple info (Rest of the component is unchanged) */}
         <div className="absolute top-2 left-2 right-2">
           <div className="flex justify-center">
             <div className={`px-3 py-1.5 rounded-lg shadow-md max-w-xs sm:max-w-sm ${
@@ -79,11 +61,9 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
           </div>
         </div>
         
-        {/* Action buttons overlay */}
         <div className="absolute bottom-2 left-2 right-2">
           <div className="flex justify-center gap-2">
             <a 
-              // Uses corrected Directions URL
               href={googleMapsDirectionsUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -102,21 +82,20 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
           </div>
         </div>
       </div>
-
-    
     </div>
   );
 };
 
-
 const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
   const { templeId } = useParams();
   const navigate = useNavigate();
+  const { token } = useAuth(); // ADD THIS LINE
   const [temple, setTemple] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showContent, setShowContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [bucketlistLoading, setBucketlistLoading] = useState(false); // ADD THIS
 
   useEffect(() => {
     loadTemple();
@@ -170,11 +149,31 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
 
   const isInBucketlist = bucketlist.some((item) => item.templeId === temple.id);
 
-  const handleBucketlistToggle = () => {
-    if (isInBucketlist) {
-      onRemove(temple.id);
-    } else {
-      onAdd(temple);
+  // REPLACE THE ENTIRE handleBucketlistToggle FUNCTION:
+  const handleBucketlistToggle = async () => {
+    if (bucketlistLoading) return; // Prevent double clicks
+    
+    setBucketlistLoading(true);
+    try {
+      if (isInBucketlist) {
+        await api.bucketlist.removeItem(token, temple.id);
+        onRemove(temple.id); // Update parent state
+      } else {
+        await api.bucketlist.addItem(token, temple.id);
+        // Create bucketlist item object for parent state
+        const bucketlistItem = {
+          templeId: temple.id,
+          templeName: temple.name,
+          templeLocation: temple.location,
+          templeImage: temple.image
+        };
+        onAdd(bucketlistItem);
+      }
+    } catch (error) {
+      console.error('Failed to update bucketlist:', error);
+      alert('Failed to update bucketlist. Please try again.');
+    } finally {
+      setBucketlistLoading(false);
     }
   };
 
@@ -182,7 +181,6 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row lg:space-x-12 items-start">
-          {/* Left Column - Image with Animation */}
           <div className={`w-full lg:w-1/2 space-y-4 transition-all duration-700 ease-out transform ${
             showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
@@ -197,13 +195,12 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
               />
             </div>
             <span className="text-xs text-gray-500 italic text-center block">
-              *AI-generated image – actual temple may differ
+              *AI-generated image — actual temple may differ
             </span>
             <hr className="max-w-lg mx-auto"/>
             <br />
           </div>
 
-          {/* Right Column - Details with Animation */}
           <div className={`w-full lg:w-1/2 space-y-6 transition-all duration-700 ease-out transform ${
             showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`} style={{ transitionDelay: '100ms' }}>
@@ -234,7 +231,6 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
               </div>
             )}
 
-           
             {temple.description && (
               <div className="space-y-3">
                 <h4 className={`text-lg font-semibold ${
@@ -319,7 +315,10 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
             <div className="flex justify-center pt-6">
               <button
                 onClick={handleBucketlistToggle}
+                disabled={bucketlistLoading}
                 className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                  bucketlistLoading ? 'opacity-50 cursor-not-allowed' : ''
+                } ${
                   isInBucketlist
                     ? isDarkMode
                       ? "bg-red-600 hover:bg-red-500 text-white"
@@ -329,7 +328,7 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove }) => {
                     : "bg-orange-500 hover:bg-orange-600 text-white"
                 }`}
               >
-                {isInBucketlist ? "- Remove from Bucketlist" : "+ Add to Bucketlist"}
+                {bucketlistLoading ? 'Processing...' : (isInBucketlist ? "- Remove from Bucketlist" : "+ Add to Bucketlist")}
               </button>
             </div>
           </div>
