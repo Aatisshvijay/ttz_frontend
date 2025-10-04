@@ -49,7 +49,7 @@ const AppContent = () => {
   const loadBucketlist = async () => {
     try {
       setLoading(true);
-      const bucketlistData = await api.bucketlist.getBucketlist(token); // FIXED
+      const bucketlistData = await api.bucketlist.getBucketlist(token);
       setBucketlist(bucketlistData);
     } catch (error) {
       console.error("Failed to load bucketlist:", error);
@@ -71,13 +71,51 @@ const AppContent = () => {
     }, 3000);
   };
 
-ˇ
+  // ADD THIS MISSING FUNCTION:
+  const handleAddToBucketlist = async (temple) => {
+    try {
+      setLoading(true);
+      
+      const templeId = temple.templeId || temple.id;
+      const templeName = temple.templeName || temple.name;
+      
+      const isAlreadyInBucketlist = bucketlist.some(item => item.templeId === templeId);
+      if (isAlreadyInBucketlist) {
+        showNotification(`${templeName} is already in your bucketlist.`, 'info');
+        setLoading(false);
+        return;
+      }
+
+      await api.bucketlist.addItem(token, templeId);
+      
+      const bucketlistItem = {
+        templeId: templeId,
+        templeName: templeName,
+        templeLocation: temple.templeLocation || temple.location,
+        templeImage: temple.templeImage || temple.image
+      };
+      
+      setBucketlist(prev => [...prev, bucketlistItem]);
+      showNotification(`${templeName} added to your bucketlist!`);
+      
+    } catch (error) {
+      console.error('Failed to add to bucketlist:', error);
+      if (error.message.includes('already in bucketlist') || error.message.includes('already')) {
+        const templeName = temple.templeName || temple.name || 'Temple';
+        showNotification(`${templeName} is already in your bucketlist.`, 'info');
+      } else {
+        showNotification('Failed to add temple to bucketlist', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRemoveFromBucketlist = async (templeId) => {
     try {
       setLoading(true);
       
-      await api.bucketlist.removeItem(token, templeId); // FIXED
+      await api.bucketlist.removeItem(token, templeId);
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
       showNotification('Temple removed from bucketlist.', 'info');
       
