@@ -17,8 +17,7 @@ const GodTemplesPage = ({ isDarkMode }) => {
       setError(null);
       try {
         console.log("GodTemplesPage: Fetching data for:", godName);
-        const response = await fetch(`/api/temples/deities/${encodeURIComponent(godName)}/categories`);
-        if (!response.ok) throw new Error("Failed to fetch categories");
+const response = await fetch(`/temples/deities/${encodeURIComponent(godName)}/categories`);        if (!response.ok) throw new Error("Failed to fetch categories");
         const categoryData = await response.json();
         console.log("GodTemplesPage: Categories Response:", categoryData);
         
