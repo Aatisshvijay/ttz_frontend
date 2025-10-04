@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check for stored authentication on app start
     const storedToken = localStorage.getItem('temple_auth_token');
     const storedUser = localStorage.getItem('temple_auth_user');
 
@@ -30,7 +29,6 @@ export const AuthProvider = ({ children }) => {
         setUser(parsedUser);
         setIsAuthenticated(true);
         
-        // Verify token is still valid
         verifyToken(storedToken);
       } catch (error) {
         console.error('Error parsing stored user data:', error);
@@ -64,17 +62,15 @@ export const AuthProvider = ({ children }) => {
         setUser(response.user);
         setIsAuthenticated(true);
         
-        // Store in localStorage for persistence
         localStorage.setItem('temple_auth_token', response.token);
         localStorage.setItem('temple_auth_user', JSON.stringify(response.user));
         
-        // FIXED: Use api.bucketlist.migrateBucketlist instead of api.migrateBucketlist
+        // Migrate bucketlist
         try {
           await api.bucketlist.migrateBucketlist(response.token);
-          console.log('✅ Bucketlist migration successful');
+          console.log('Bucketlist migration successful');
         } catch (migrateError) {
           console.error('Failed to migrate bucketlist:', migrateError);
-          // Don't fail login if migration fails
         }
         
         return { success: true };
@@ -83,7 +79,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: error.message || 'Login failed' };
     }
   };
 
@@ -96,7 +92,6 @@ export const AuthProvider = ({ children }) => {
         setUser(response.user);
         setIsAuthenticated(true);
         
-        // Store in localStorage for persistence
         localStorage.setItem('temple_auth_token', response.token);
         localStorage.setItem('temple_auth_user', JSON.stringify(response.user));
         
@@ -106,7 +101,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: error.message || 'Registration failed' };
     }
   };
 
@@ -114,11 +109,9 @@ export const AuthProvider = ({ children }) => {
     try {
       if (token) {
         await api.auth.logout(token);
-        console.log('✅ Logout successful');
       }
     } catch (error) {
       console.error('Logout API call failed:', error);
-      // Continue with local logout even if API call fails
     } finally {
       clearAuth();
     }
