@@ -156,39 +156,23 @@ const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove, showNotifi
     
     try {
       if (isInBucketlist) {
-        // Remove
-        await api.bucketlist.removeItem(token, temple.id);
-        onRemove(temple.id);
-        
-        // Show notification for removal
-        showNotification(`${temple.name} removed from bucketlist`, 'info');
+        // Remove from bucketlist
+        await onRemove(temple.id);
       } else {
-        // Check before adding
-        if (bucketlist.some(item => item.templeId === temple.id)) {
-          setBucketlistLoading(false);
-          return;
-        }
-        
-        // Add to backend
-        const newItem = await api.bucketlist.addItem(token, temple.id);
-        onAdd(newItem);
-        
-        // Show notification for adding
-        showNotification(`${temple.name} added to your bucketlist!`, 'success');
+        // Add to bucketlist - pass the complete temple object
+        await onAdd({
+          id: temple.id,
+          templeId: temple.id,
+          name: temple.name,
+          templeName: temple.name,
+          location: temple.location,
+          image: temple.image,
+          deity: temple.deity || '',
+          category: temple.category || ''
+        });
       }
     } catch (error) {
-      console.error('Failed to update bucketlist:', error);
-      
-      // Handle duplicate error silently - sync state without showing notification
-      if (error.message && error.message.includes('already in bucketlist')) {
-        const updatedBucketlist = await api.bucketlist.getBucketlist(token);
-        const existingItem = updatedBucketlist.find(item => item.templeId === temple.id);
-        if (existingItem && !isInBucketlist) {
-          onAdd(existingItem);
-        }
-      } else {
-        showNotification('Failed to update bucketlist', 'error');
-      }
+      console.error('Toggle bucketlist failed:', error);
     } finally {
       setBucketlistLoading(false);
     }

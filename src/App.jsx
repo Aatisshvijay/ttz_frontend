@@ -32,6 +32,7 @@ const AppContent = () => {
   const [bucketlist, setBucketlist] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [isLoadingBucketlist, setIsLoadingBucketlist] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, token, isAuthenticated } = useAuth();
@@ -58,8 +59,13 @@ const AppContent = () => {
       return;
     }
     
+    if (isLoadingBucketlist) return; // Prevent concurrent loads
+    
+    setIsLoadingBucketlist(true);
     try {
+      console.log('Loading bucketlist from backend...');
       const bucketlistData = await api.bucketlist.getBucketlist(token);
+      console.log('Bucketlist loaded:', bucketlistData.length, 'items');
       setBucketlist(bucketlistData);
     } catch (error) {
       console.error("Failed to load bucketlist:", error);
@@ -67,6 +73,8 @@ const AppContent = () => {
       if (bucketlist.length > 0) {
         showNotification('Failed to load your bucketlist', 'error');
       }
+    } finally {
+      setIsLoadingBucketlist(false);
     }
   };
 
@@ -82,21 +90,21 @@ const AppContent = () => {
     }, 3000);
   };
 
-  // OPTIMIZED: Optimistic update with instant UI feedback
+  // FIXED: Properly handle backend state sync
   const handleAddToBucketlist = async (temple) => {
     const templeId = temple.templeId || temple.id;
     const templeName = temple.templeName || temple.name;
     
-    // Check FIRST before making API call
+    // Check local state first
     const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
     
     if (isAlreadyInList) {
       showNotification(`${templeName} is already in your bucketlist.`, 'info');
-      return; // Exit immediately
+      return;
     }
     
     try {
-      // Optimistic update - update UI immediately
+      // Optimistic update
       const optimisticItem = {
         _id: `temp-${Date.now()}`,
         templeId,
@@ -111,7 +119,7 @@ const AppContent = () => {
       setBucketlist(prev => [optimisticItem, ...prev]);
       showNotification(`${templeName} added to your bucketlist!`);
       
-      // Then update backend (no loading state needed)
+      // Add to backend
       const newItem = await api.bucketlist.addItem(token, templeId);
       
       // Replace optimistic item with real one
@@ -122,22 +130,31 @@ const AppContent = () => {
     } catch (error) {
       console.error('Failed to add to bucketlist:', error);
       
-      // Rollback on error
+      // Rollback optimistic update
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
       
+      // Check if it's a duplicate error
       if (error.message && error.message.includes('already in bucketlist')) {
-        await loadBucketlist(); // Sync state silently
+        // Silently sync with backend without showing notification
+        console.log('Temple already exists in backend, syncing...');
+        await loadBucketlist(); // Refresh from backend
       } else {
         showNotification('Failed to add temple to bucketlist', 'error');
       }
     }
   };
 
-  // OPTIMIZED: Optimistic update with instant UI feedback
+  // FIXED: Optimistic update with better error handling
   const handleRemoveFromBucketlist = async (templeId) => {
+    const removedItem = bucketlist.find(item => item.templeId === templeId);
+    
+    if (!removedItem) {
+      console.log('Item not found in local state');
+      return;
+    }
+    
     try {
       // Optimistic update - remove from UI immediately
-      const removedItem = bucketlist.find(item => item.templeId === templeId);
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
       showNotification('Temple removed from bucketlist.', 'info');
       
@@ -146,9 +163,10 @@ const AppContent = () => {
       
     } catch (error) {
       console.error('Failed to remove from bucketlist:', error);
+      
+      // Rollback - add item back
+      setBucketlist(prev => [removedItem, ...prev]);
       showNotification('Failed to remove temple from bucketlist', 'error');
-      // Reload to sync state
-      await loadBucketlist();
     }
   };
 

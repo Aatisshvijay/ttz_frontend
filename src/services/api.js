@@ -4,6 +4,46 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'https://ttz-backend.onrender.c
 
 console.log('API Base URL:', BASE_URL);
 
+// In-memory cache
+const cache = {
+  data: {},
+  timestamps: {},
+  CACHE_DURATION: 5 * 60 * 1000 // 5 minutes
+};
+
+const getCachedData = (key) => {
+  const cached = cache.data[key];
+  const timestamp = cache.timestamps[key];
+  
+  if (cached && timestamp && (Date.now() - timestamp < cache.CACHE_DURATION)) {
+    console.log(`✓ Using cached data for: ${key}`);
+    return cached;
+  }
+  return null;
+};
+
+const setCachedData = (key, data) => {
+  cache.data[key] = data;
+  cache.timestamps[key] = Date.now();
+  console.log(`✓ Cached data for: ${key}`);
+};
+
+const clearCache = (pattern = null) => {
+  if (pattern) {
+    Object.keys(cache.data).forEach(key => {
+      if (key.includes(pattern)) {
+        delete cache.data[key];
+        delete cache.timestamps[key];
+        console.log(`✓ Cleared cache for: ${key}`);
+      }
+    });
+  } else {
+    cache.data = {};
+    cache.timestamps = {};
+    console.log('✓ Cleared all cache');
+  }
+};
+
 const getSessionId = () => {
   let sessionId = sessionStorage.getItem('temple_session_id');
   if (!sessionId) {
@@ -13,7 +53,13 @@ const getSessionId = () => {
   return sessionId;
 };
 
-const fetchWithRetry = async (url, options = {}, retries = 3) => {
+const fetchWithRetry = async (url, options = {}, retries = 3, cacheKey = null) => {
+  // Check cache for GET requests
+  if ((!options.method || options.method === 'GET') && cacheKey) {
+    const cached = getCachedData(cacheKey);
+    if (cached) return cached;
+  }
+
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       console.log(`Attempt ${attempt + 1}/${retries}: ${url}`);
@@ -26,6 +72,12 @@ const fetchWithRetry = async (url, options = {}, retries = 3) => {
       if (response.ok) {
         const data = await response.json();
         console.log('Request successful');
+        
+        // Cache GET requests
+        if ((!options.method || options.method === 'GET') && cacheKey) {
+          setCachedData(cacheKey, data);
+        }
+        
         return data;
       }
       
@@ -118,6 +170,16 @@ export const getImageWithFallback = (temple) => {
       return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147283/rama_jb7c67.png';
     } else if (deity.includes('narasimha') || category.includes('narasimha')) {
       return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147309/narasimha_zuqnth.png';
+    } else if (deity.includes('varaha') || category.includes('varaha')) {
+      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147273/varaha_dbildy.png';
+    } else if (deity.includes('vamana') || category.includes('vamana')) {
+      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147283/vamana_bfz0nq.png';
+    } else if (deity.includes('parshuram') || category.includes('parshuram')) {
+      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147298/parshurama_jrryj4.png';
+    } else if (deity.includes('matsya') || category.includes('matsya')) {
+      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147315/matsya_nr5z9h.png';
+    } else if (deity.includes('kurma') || category.includes('kurma')) {
+      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147338/kurmam_clsc26.png';
     } else if (deity.includes('shiva')) {
       if (category.includes('jyotirlinga')) {
         return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147279/shiva_h9u69h.png';
@@ -127,8 +189,12 @@ export const getImageWithFallback = (temple) => {
         return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147363/bh_y9yjn1.png';
       }
     } else if (deity.includes('shakti') || deity.includes('goddess shakti')) {
-      return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147281/shakti_e7kaaz.png';
-    } else if (deity.includes('lakshmi')) {
+      if (category.includes('shakti peetha')) {
+        return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147281/shakti_e7kaaz.png';
+      } else {
+        return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147392/dt2_oyytsm.png';
+      }
+    } else if (deity.includes('lakshmi') || deity.includes('goddess lakshmi')) {
       return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147323/laxmi_su1sgk.png';
     } else if (deity.includes('hanuman')) {
       return 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147343/hanuman_smnyyx.png';
@@ -176,13 +242,19 @@ const authApi = {
   },
 
   getMe: async (token) => {
+    if (!token) return null;
     return await fetchWithRetry(`${BASE_URL}/auth/me`, {
       method: 'GET',
       headers: createHeaders(token, false),
-    });
+    }, 3, `user-${token.substring(0, 10)}`);
   },
   
   logout: async (token) => {
+    // Clear all caches on logout
+    clearCache();
+    
+    if (!token) return;
+    
     return await fetchWithRetry(`${BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: createHeaders(token, false),
@@ -190,10 +262,14 @@ const authApi = {
   }
 };
 
-// Bucketlist API
+// Bucketlist API - FIXED VERSION
 const bucketlistApi = {
   getBucketlist: async (token) => {
     const sessionId = getSessionId();
+    
+    // Don't cache bucketlist - always fetch fresh data
+    console.log('Fetching bucketlist...', { hasToken: !!token, sessionId });
+    
     return await fetchWithRetry(`${BASE_URL}/bucketlist`, {
       method: 'GET',
       headers: {
@@ -205,6 +281,9 @@ const bucketlistApi = {
 
   addItem: async (token, templeId) => {
     const sessionId = getSessionId();
+    
+    console.log('Adding to bucketlist:', { templeId, hasToken: !!token, sessionId });
+    
     return await fetchWithRetry(`${BASE_URL}/bucketlist`, {
       method: 'POST',
       headers: {
@@ -217,6 +296,9 @@ const bucketlistApi = {
 
   removeItem: async (token, templeId) => {
     const sessionId = getSessionId();
+    
+    console.log('Removing from bucketlist:', { templeId, hasToken: !!token, sessionId });
+    
     return await fetchWithRetry(`${BASE_URL}/bucketlist/${templeId}`, {
       method: 'DELETE',
       headers: {
@@ -234,11 +316,14 @@ const bucketlistApi = {
         ...createHeaders(token, false),
         'x-session-id': sessionId
       },
-    });
+    }, 3, `check-${templeId}`);
   },
   
   migrateBucketlist: async (token) => {
     const sessionId = getSessionId();
+    
+    console.log('Migrating bucketlist:', { hasToken: !!token, sessionId });
+    
     return await fetchWithRetry(`${BASE_URL}/bucketlist/migrate`, {
       method: 'POST',
       headers: createHeaders(token, true),
@@ -250,40 +335,65 @@ const bucketlistApi = {
 // Temple API
 const templeApi = {
   getDeities: async () => {
-    return await fetchWithRetry(`${BASE_URL}/temples/deities`);
+    return await fetchWithRetry(
+      `${BASE_URL}/temples/deities`,
+      {},
+      3,
+      'deities'
+    );
   },
   
   getDeityCategories: async (deity) => {
     return await fetchWithRetry(
-      `${BASE_URL}/temples/deities/${encodeURIComponent(deity)}/categories`
+      `${BASE_URL}/temples/deities/${encodeURIComponent(deity)}/categories`,
+      {},
+      3,
+      `categories-${deity}`
     );
   },
   
   getGodTemples: async (deity) => {
     return await fetchWithRetry(
-      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}`
+      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}`,
+      {},
+      3,
+      `god-${deity}`
     );
   },
   
   getCategoryTemples: async (deity, category) => {
     return await fetchWithRetry(
-      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`
+      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`,
+      {},
+      3,
+      `category-${deity}-${category}`
     );
   },
 
   getAvatarTemples: async (deity, category) => {
     return await fetchWithRetry(
-      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`
+      `${BASE_URL}/temples/deity/${encodeURIComponent(deity)}/${encodeURIComponent(category)}`,
+      {},
+      3,
+      `avatar-${deity}-${category}`
     );
   },
 
   getTempleById: async (id) => {
-    return await fetchWithRetry(`${BASE_URL}/temples/${id}`);
+    return await fetchWithRetry(
+      `${BASE_URL}/temples/${id}`,
+      {},
+      3,
+      `temple-${id}`
+    );
   },
 
   searchTemples: async (query, limit = 50) => {
     return await fetchWithRetry(
-      `${BASE_URL}/temples/search?q=${encodeURIComponent(query)}&limit=${limit}`
+      `${BASE_URL}/temples/search?q=${encodeURIComponent(query)}&limit=${limit}`,
+      {},
+      3,
+      `search-${query}-${limit}`
     );
   }
 };
