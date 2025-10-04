@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-8">
-      <div className="container mx-auto px-4 text-center md:text-left">
+<footer className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-8" style={{ minHeight: '100px' }}>      <div className="container mx-auto px-4 text-center md:text-left">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-8">
           {/* Branding and Copyright */}
           <div>

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Gita from "./Gita";
-import { api } from '../services/api'; // <--- ADDED IMPORT OF THE SERVICE
+import { api } from '../services/api';
 
 const HomePage = ({ isDarkMode, navigate }) => {
   const [deities, setDeities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showDeities, setShowDeities] = useState(false);
 
   useEffect(() => {
     const fetchDeities = async () => {
@@ -17,27 +16,18 @@ const HomePage = ({ isDarkMode, navigate }) => {
         setLoadingProgress(10);
         
         const startTime = Date.now();
-        // **FIXED LOGIC**: api.temples.getDeities() returns the JSON data directly.
         const data = await api.temples.getDeities(); 
         
         setLoadingProgress(60);
         
-        // **REMOVED INCORRECT LOGIC**: The api.js service handles these checks.
-        // REMOVED: if (!response.ok) throw new Error('Failed to fetch deities');
-        // REMOVED: const data = await response.json();
-        
-        setLoadingProgress(90);
-        
         console.log(`Deities fetched in ${Date.now() - startTime}ms`);
         console.log('Fetched deities:', data);
         
-        setDeities(data); // Set the received data
+        setDeities(data);
         setLoadingProgress(100);
         
-        // Small delay to show completion, then trigger show animation
         setTimeout(() => {
           setLoading(false);
-          setTimeout(() => setShowDeities(true), 100);
         }, 200);
       } catch (error) {
         console.error('Error fetching deities:', error);
@@ -50,11 +40,10 @@ const HomePage = ({ isDarkMode, navigate }) => {
     fetchDeities();
   }, []);
 
-  // Skeleton loader component
   const DeityCardSkeleton = () => (
     <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse ${
       isDarkMode ? "bg-gray-800" : "bg-white"
-    }`}>
+    }`} style={{ minHeight: '320px' }}>
       <div className={`w-24 h-24 rounded-2xl mb-4 ${
         isDarkMode ? "bg-gray-700" : "bg-gray-200"
       }`}></div>
@@ -70,19 +59,17 @@ const HomePage = ({ isDarkMode, navigate }) => {
     </div>
   );
 
-  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 will-change-transform ${
+  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 ${
     isDarkMode
       ? "bg-gray-800 text-gray-100 hover:shadow-orange-500"
       : "bg-white text-gray-800"
   }`;
 
-  // Create a lookup object from the API data for easy access
   const deityLookup = deities.reduce((acc, deity) => {
     acc[deity.name] = deity;
     return acc;
   }, {});
 
-  // Original deity order
   const originalDeities = [
     "Maha Avatars of Vishnu",
     "Lord Shiva", 
@@ -95,7 +82,6 @@ const HomePage = ({ isDarkMode, navigate }) => {
     "Navagraha Temples"
   ];
 
-  // Filter to only show deities that exist in our API data
   const availableDeities = originalDeities.filter(name => deityLookup[name]);
 
   const getDisplayCount = (deityName) => {
@@ -138,10 +124,10 @@ const HomePage = ({ isDarkMode, navigate }) => {
   if (loading) {
     return (
       <div>
-        {/* Welcome Section - Show immediately */}
+        {/* Welcome Section - FIXED: Added minHeight */}
         <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
           isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-        } text-white`}>
+        } text-white`} style={{ minHeight: '300px' }}>
           <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
             <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
           </h1>
@@ -151,17 +137,17 @@ const HomePage = ({ isDarkMode, navigate }) => {
           </p>
         </div>
 
-        {/* Stats Section - Show immediately */}
+        {/* Stats Section - FIXED: Added minHeight to each card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">250+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
           </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">25+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
           </div>
-          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
             <div className="text-2xl font-bold text-orange-500">5000+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
           </div>
@@ -169,7 +155,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
         <Gita isDarkMode={isDarkMode} />
 
-        {/* Loading indicator with progress */}
+        {/* Loading indicator */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4">Loading Divine Journeys...</h2>
           <div className={`w-full max-w-md mx-auto bg-gray-200 rounded-full h-2 mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
@@ -183,8 +169,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
           </p>
         </div>
 
-        {/* Skeleton Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* FIXED: Added minHeight to grid container */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" style={{ minHeight: '1000px' }}>
           {Array.from({ length: 9 }).map((_, index) => (
             <DeityCardSkeleton key={index} />
           ))}
@@ -218,10 +204,10 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
   return (
     <div>
-      {/* Welcome Section */}
+      {/* Welcome Section - FIXED: Added minHeight */}
       <div className={`flex flex-col items-center justify-center py-16 rounded-2xl shadow-xl mb-12 bg-gradient-to-br ${
         isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
-      } text-white`}>
+      } text-white`} style={{ minHeight: '300px' }}>
         <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
           <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
         </h1>
@@ -231,17 +217,17 @@ const HomePage = ({ isDarkMode, navigate }) => {
         </p>
       </div>
 
-      {/* Stats Section */}
+      {/* Stats Section - FIXED: Added minHeight */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">250+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
         </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">25+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Indian States</div>
         </div>
-        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
           <div className="text-2xl font-bold text-orange-500">5000+</div>
           <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Years of History</div>
         </div>
@@ -249,11 +235,14 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      {/* Deities Grid with CSS-based staggered animations */}
-      <h2 className="text-3xl font-bold mb-8 text-center">
-        Choose Your Divine Journey
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-100ms">
+      {/* Deities Grid - FIXED: Removed showDeities state, added minHeight */}
+      <div className="text-center mb-12" style={{ minHeight: '80px' }}>
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          Choose Your Divine Journey
+        </h2>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-100ms" style={{ minHeight: '1000px' }}>
         {availableDeities.map((deityName) => (
           <div
             key={deityName}
@@ -267,9 +256,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 navigate(`/god/${encodeURIComponent(deityName)}`);
               }
             }}
-            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base stagger-card-d700 ${
-              showDeities ? 'is-visible' : ''
-            }`}
+            className={`${cardClass} p-8 flex flex-col items-center justify-center text-center group stagger-card-base`}
+            style={{ minHeight: '320px' }}
           >
             <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 rounded-2xl">
               <img

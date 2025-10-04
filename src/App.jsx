@@ -159,7 +159,8 @@ const AppContent = () => {
         onSearch={handleSearch}
       />
 
-      <main className="container mx-auto px-4 py-8 flex-grow">
+      <main className="container mx-auto px-4 py-8 flex-grow" style={{ minHeight: 'calc(100vh - 80px - 100px)' }}>
+  {/* 80px = header, 100px = footer approximate heights */}
         {loading && (
           <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
             <div className={`px-4 py-2 rounded-lg shadow-lg ${
