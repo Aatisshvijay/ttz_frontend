@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { api } from "../services/api";  // ADD THIS IMPORT
 import OptimizedImage from "./OptimizedImage";
 
 const GodTemplesPage = ({ isDarkMode }) => {
@@ -17,10 +18,13 @@ const GodTemplesPage = ({ isDarkMode }) => {
       setError(null);
       try {
         console.log("GodTemplesPage: Fetching data for:", godName);
-const response = await fetch(`/temples/deities/${encodeURIComponent(godName)}/categories`);        if (!response.ok) throw new Error("Failed to fetch categories");
-        const categoryData = await response.json();
+        
+        // CHANGED: Use api.temples.getDeityCategories instead of direct fetch
+        const categoryData = await api.temples.getDeityCategories(godName);
+        
         console.log("GodTemplesPage: Categories Response:", categoryData);
         
+        // Rest of your code stays the same...
         const vishnuCategoryOrder = ['Vishnu (108 Divya Desams)', 'Matsya Avatar', 'Kurma Avatar', 'Lord Varaha', 'Lord Narasimha', 'Lord Vamana', 'Lord Parshuram', 'Lord Sri Rama', 'Lord Krishna'];
         let transformedCategories = categoryData.map((category) => ({
           name: category.name,
@@ -54,6 +58,8 @@ const response = await fetch(`/temples/deities/${encodeURIComponent(godName)}/ca
     };
     if (godName) fetchData();
   }, [godName]);
+
+  // Rest of your component stays exactly the same...
 
   const getCategoryDescription = (category, deity) => {
     const descriptions = { 

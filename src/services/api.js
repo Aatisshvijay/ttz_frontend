@@ -6,7 +6,7 @@
 // ============================================
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://ttz-backend.onrender.com'; 
 
-console.log('🌐 API Base URL:', BASE_URL);
+console.log('🌍 API Base URL:', BASE_URL);
 
 // Session ID management
 const getSessionId = () => {
@@ -18,11 +18,13 @@ const getSessionId = () => {
   return sessionId;
 };
 
-// Enhanced fetch with retry logic and better error handling
+// ============================================
+// MOVED: fetchWithRetry MUST be defined BEFORE templeApi
+// ============================================
 const fetchWithRetry = async (url, options = {}, retries = 3) => {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      console.log(`🔄 Attempt ${attempt + 1}/${retries}: ${url}`);
+      console.log(`📡 Attempt ${attempt + 1}/${retries}: ${url}`);
       
       const response = await fetch(url, options);
       
@@ -290,11 +292,18 @@ const bucketlistApi = {
 };
 
 // ============================================
-// Temple API
+// Temple API (NOW DEFINED AFTER fetchWithRetry)
 // ============================================
 const templeApi = {
   getDeities: async () => {
     return await fetchWithRetry(`${BASE_URL}/temples/deities`);
+  },
+  
+  // NEW METHOD for nested deity categories:
+  getDeityCategories: async (deity) => {
+    return await fetchWithRetry(
+      `${BASE_URL}/temples/deities/${encodeURIComponent(deity)}/categories`
+    );
   },
   
   getGodTemples: async (deity) => {
