@@ -37,13 +37,12 @@ const OptimizedImage = ({
     const blurPlaceholderUrl = useMemo(() => getBlurPlaceholder(src || DEFAULT_FALLBACK_URL), [src]);
     const srcSet = useMemo(() => [400, 800, 1200].map(w => `${optimizeCloudinaryUrl(src || DEFAULT_FALLBACK_URL, w)} ${w}w`).join(', '), [src]);
     
-    // Calculate aspect ratio - FIXED
-    const aspectRatio = useMemo(() => {
-        if (!width || !height || width <= 0 || height <= 0) return '16 / 9'; // Default fallback
-        return `${width} / ${height}`;
+    // CRITICAL FIX: Use padding-bottom instead of aspect-ratio
+    const paddingBottom = useMemo(() => {
+        if (!width || !height || width <= 0 || height <= 0) return '56.25%'; // 16:9 fallback
+        return `${(height / width) * 100}%`;
     }, [width, height]);
 
-    // Preload image for eager loading
     useEffect(() => {
         if (eagerLoad && src) {
             const img = new Image();
@@ -68,8 +67,8 @@ const OptimizedImage = ({
         <div 
             className={`relative w-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
             style={{ 
-                aspectRatio: aspectRatio,
-                minHeight: '192px' // Prevent collapse during load
+                paddingBottom: paddingBottom,
+                height: 0 // Forces container to respect padding-bottom
             }}
         >
             {/* Blur Placeholder */}
@@ -78,12 +77,9 @@ const OptimizedImage = ({
                     src={blurPlaceholderUrl}
                     alt=""
                     className="absolute inset-0 w-full h-full object-cover"
-                    style={{ aspectRatio: aspectRatio }}
                     aria-hidden="true"
                 />
             )}
-
-            {/* Loading Spinner - Removed to reduce CLS */}
             
             {/* Error State */}
             {imageError && (
@@ -103,7 +99,6 @@ const OptimizedImage = ({
                     srcSet={srcSet}
                     sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
                     className={`${className} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                    style={{ aspectRatio: aspectRatio }}
                     width={width}
                     height={height}
                     loading={eagerLoad ? "eager" : "lazy"}
