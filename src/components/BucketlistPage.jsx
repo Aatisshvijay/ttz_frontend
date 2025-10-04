@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleTravelPlannerModal from "./SimpleTravelPlannerModal";
+import { getImageWithFallback } from "../services/api"; // ADD THIS IMPORT
 
 const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
       : "bg-white text-gray-800"
   }`;
 
-  // Validate bucketlist data
   const validBucketlist = bucketlist.filter(
     (item) => item && item.templeId && item.templeName
   );
@@ -25,7 +25,7 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
             isDarkMode ? "text-white" : "text-gray-900"
           }`}
         >
-          Your Temple Bucketlist is Empty 😔
+          Your Temple Bucketlist is Empty
         </h2>
         <p
           className={`text-xl mb-8 ${
@@ -48,7 +48,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
     );
   }
 
-  // Sort bucketlist by added date (most recent first)
   const sortedBucketlist = [...validBucketlist].sort((a, b) => {
     const dateA = new Date(a.addedAt || a.createdAt || Date.now());
     const dateB = new Date(b.addedAt || b.createdAt || Date.now());
@@ -58,6 +57,23 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
   const handleTravelPlannerOpen = () => {
     console.log("Opening travel planner with bucketlist:", validBucketlist);
     setShowTravelPlanner(true);
+  };
+
+  // ADD THIS HELPER FUNCTION
+  const getTempleImage = (item) => {
+    // If image exists and is a full URL, use it
+    if (item.templeImage && item.templeImage.startsWith('http')) {
+      return item.templeImage;
+    }
+    
+    // Otherwise use fallback based on temple name/location
+    return getImageWithFallback({
+      image: item.templeImage,
+      name: item.templeName,
+      location: item.templeLocation,
+      deity: item.deity || '',
+      category: item.category || ''
+    });
   };
 
   return (
@@ -75,7 +91,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
           {validBucketlist.length !== 1 ? "s" : ""} on your spiritual journey
         </p>
 
-        {/* Travel Planner Button */}
         {validBucketlist.length >= 2 && (
           <button
             onClick={handleTravelPlannerOpen}
@@ -123,15 +138,16 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
           >
             <div className="relative">
               <img
-                src={
-                  item.templeImage 
-                }
+                src={getTempleImage(item)} 
                 alt={item.templeName}
                 className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity duration-300"
                 onClick={() => navigate(`/temple/${item.templeId}`)}
+                onError={(e) => {
+                  // UPDATED: Fallback if image fails to load
+                  e.target.src = 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147364/balaji_m7oo1u.png';
+                }}
               />
 
-              {/* Remove button overlay */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -191,7 +207,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
                 {item.templeLocation}
               </p>
 
-              {/* Added date */}
               <p
                 className={`text-xs flex items-center mb-4 ${
                   isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -216,7 +231,6 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
                 ).toLocaleDateString()}
               </p>
 
-              {/* Action buttons */}
               <div className="flex justify-between items-center">
                 <button
                   onClick={() => navigate(`/temple/${item.templeId}`)}
@@ -228,16 +242,12 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
                 >
                   View Details
                 </button>
-
-                
               </div>
             </div>
           </div>
         ))}
       </div>
 
-
-      {/* Travel Planner Modal */}
       <SimpleTravelPlannerModal
         isOpen={showTravelPlanner}
         onClose={() => setShowTravelPlanner(false)}

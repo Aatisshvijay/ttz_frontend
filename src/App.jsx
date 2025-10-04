@@ -71,31 +71,7 @@ const AppContent = () => {
     }, 3000);
   };
 
-  const handleAddToBucketlist = async (temple) => {
-    try {
-      setLoading(true);
-      
-      const isAlreadyInBucketlist = bucketlist.some(item => item.templeId === temple.templeId);
-      if (isAlreadyInBucketlist) {
-        showNotification(`${temple.templeName} is already in your bucketlist.`, 'info');
-        return;
-      }
-
-      await api.bucketlist.addItem(token, temple.templeId); // FIXED
-      setBucketlist(prev => [...prev, temple]);
-      showNotification(`${temple.templeName} added to your bucketlist!`);
-      
-    } catch (error) {
-      console.error('Failed to add to bucketlist:', error);
-      if (error.message.includes('already in bucketlist')) {
-        showNotification(`Temple is already in your bucketlist.`, 'info');
-      } else {
-        showNotification('Failed to add temple to bucketlist', 'error');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+ˇ
 
   const handleRemoveFromBucketlist = async (templeId) => {
     try {
