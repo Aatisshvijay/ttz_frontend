@@ -74,37 +74,38 @@ const AppContent = () => {
 // Replace the handleAddToBucketlist function in App.jsx with this:
 
 const handleAddToBucketlist = async (temple) => {
+  if (loading) return; // Prevent double-clicks
+  
   try {
     setLoading(true);
     
     const templeId = temple.templeId || temple.id;
     const templeName = temple.templeName || temple.name;
     
-    // Check if already in bucketlist BEFORE trying to add
+    // Check FIRST before making API call
     const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
     
     if (isAlreadyInList) {
       showNotification(`${templeName} is already in your bucketlist.`, 'info');
+      setLoading(false);
       return;
     }
     
     // Add to backend
-    await api.bucketlist.addItem(token, templeId);
+    const newItem = await api.bucketlist.addItem(token, templeId);
     
-    // Reload the entire bucketlist from backend to ensure sync
-    await loadBucketlist();
+    // Update local state immediately (optimistic update)
+    setBucketlist(prev => [newItem, ...prev]);
     
     showNotification(`${templeName} added to your bucketlist!`);
     
   } catch (error) {
     console.error('Failed to add to bucketlist:', error);
     
-    // Only show error if it's NOT a duplicate error
-    if (error.message.includes('already in bucketlist') || error.message.includes('already')) {
-      const templeName = temple.templeName || temple.name || 'Temple';
-      showNotification(`${templeName} is already in your bucketlist.`, 'info');
-      // Reload to sync state
+    if (error.message && error.message.includes('already in bucketlist')) {
+      // Reload only if there's a sync issue
       await loadBucketlist();
+      showNotification(`${temple.templeName || temple.name} is already in your bucketlist.`, 'info');
     } else {
       showNotification('Failed to add temple to bucketlist', 'error');
     }

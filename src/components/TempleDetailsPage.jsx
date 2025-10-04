@@ -153,23 +153,36 @@ const handleBucketlistToggle = async () => {
   if (bucketlistLoading) return;
   
   setBucketlistLoading(true);
+  
   try {
     if (isInBucketlist) {
+      // Remove
       await api.bucketlist.removeItem(token, temple.id);
       onRemove(temple.id);
     } else {
-      await api.bucketlist.addItem(token, temple.id);
-      
-      // Fetch the actual item from backend to get correct data
-      const updatedBucketlist = await api.bucketlist.getBucketlist(token);
-      const addedItem = updatedBucketlist.find(item => item.templeId === temple.id);
-      
-      if (addedItem) {
-        onAdd(addedItem); // Pass the actual backend item
+      // Check before adding
+      if (bucketlist.some(item => item.templeId === temple.id)) {
+        setBucketlistLoading(false);
+        return; // Already there, do nothing
       }
+      
+      // Add to backend
+      const newItem = await api.bucketlist.addItem(token, temple.id);
+      onAdd(newItem);
     }
   } catch (error) {
-    // ... error handling
+    console.error('Failed to update bucketlist:', error);
+    
+    // Silent handling for duplicate errors
+    if (error.message && error.message.includes('already in bucketlist')) {
+      const updatedBucketlist = await api.bucketlist.getBucketlist(token);
+      const existingItem = updatedBucketlist.find(item => item.templeId === temple.id);
+      if (existingItem) {
+        onAdd(existingItem);
+      }
+    } else {
+      alert('Failed to update bucketlist. Please try again.');
+    }
   } finally {
     setBucketlistLoading(false);
   }

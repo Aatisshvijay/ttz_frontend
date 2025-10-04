@@ -58,56 +58,61 @@ const SimpleTravelPlannerModal = ({ isOpen, onClose, bucketlist, isDarkMode }) =
     }
   };
 
-  const generateSimplePlan = async () => {
-    if (selectedTemples.length === 0) {
-      setError('Please select at least one temple');
-      return;
+const generateSimplePlan = async () => {
+  if (selectedTemples.length === 0) {
+    setError('Please select at least one temple');
+    return;
+  }
+
+  setIsLoading(true);
+  setError(null);
+
+  try {
+    // FIX: Use the correct BASE_URL from api.js
+    const BASE_URL = import.meta.env.VITE_API_URL || 'https://ttz-backend.onrender.com';
+    
+    const response = await fetch(`${BASE_URL}/temples/plan-trip`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        templeIds: selectedTemples,
+        userLocation: userLocation,
+        preferences: { maxDailyTravel: 400, tripDuration: 'flexible' }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate travel plan');
     }
 
-    setIsLoading(true);
-    setError(null);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'No travel plan could be generated');
+    }
 
-    try {
-      const response = await fetch('/api/temples/plan-trip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          templeIds: selectedTemples,
-          userLocation: userLocation,
-          preferences: { maxDailyTravel: 400, tripDuration: 'flexible' }
-        })
+    const optimizedRoute = data.planningOptions?.optimizedRoute;
+    if (optimizedRoute) {
+      setTravelPlan({
+        temples: optimizedRoute.temples || [],
+        stats: optimizedRoute.stats || {},
+        totalTemples: selectedTemples.length
       });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate travel plan');
-      }
-
-      if (!data.success) {
-        throw new Error(data.error || 'No travel plan could be generated');
-      }
-
-      const optimizedRoute = data.planningOptions?.optimizedRoute;
-      if (optimizedRoute) {
-        setTravelPlan({
-          temples: optimizedRoute.temples || [],
-          stats: optimizedRoute.stats || {},
-          totalTemples: selectedTemples.length
-        });
-      } else {
-        throw new Error('No optimized route found in response');
-      }
-      
-    } catch (err) {
-      console.error('Travel planning error:', err);
-      setError(`Failed to generate travel plan: ${err.message}`);
-    } finally {
-      setIsLoading(false);
+    } else {
+      throw new Error('No optimized route found in response');
     }
-  };
+    
+  } catch (err) {
+    console.error('Travel planning error:', err);
+    setError(`Failed to generate travel plan: ${err.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const resetPlanner = () => {
     setTravelPlan(null);
