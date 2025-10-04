@@ -5,7 +5,7 @@ import { api } from '../services/api';
 
 const HomePage = ({ isDarkMode, navigate }) => {
   const [deities, setDeities] = useState([]);
-  const [loading, setLoading] = useState(false); // CHANGED: Initialize as false
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -14,13 +14,42 @@ const HomePage = ({ isDarkMode, navigate }) => {
         setLoading(true);
         const data = await api.temples.getDeities(); 
         console.log('Fetched deities:', data);
-        setDeities(data);
+        
+        if (data && data.length > 0) {
+          // Preload first 3 images (visible on load)
+          const visiblePromises = data.slice(0, 3).map(deity => {
+            return new Promise((resolve) => {
+              if (deity.image) {
+                const img = new Image();
+                img.onload = resolve;
+                img.onerror = resolve;
+                img.src = deity.image;
+              } else {
+                resolve();
+              }
+            });
+          });
+          
+          await Promise.all(visiblePromises);
+          setDeities(data);
+          setLoading(false);
+          
+          // Preload remaining images in background (non-blocking)
+          data.slice(3).forEach(deity => {
+            if (deity.image) {
+              const img = new Image();
+              img.src = deity.image;
+            }
+          });
+        } else {
+          setDeities(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Error fetching deities:', error);
         setError(error.message);
         setDeities([]);
-      } finally {
-        setLoading(false); // REMOVED: setTimeout delay
+        setLoading(false);
       }
     };
 
