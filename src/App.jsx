@@ -36,17 +36,15 @@ const AppContent = () => {
   const location = useLocation();
   const { user, token, isAuthenticated } = useAuth();
 
-  // SIMPLIFIED: Load bucketlist once on mount
+  // Load bucketlist when auth state changes
   useEffect(() => {
-    loadBucketlist();
-  }, []);
-
-  // SIMPLIFIED: Reload bucketlist only when auth state changes
-  useEffect(() => {
-    if (isAuthenticated !== undefined) {
+    if (isAuthenticated && token) {
       loadBucketlist();
+    } else if (isAuthenticated === false) {
+      // Clear bucketlist when logged out
+      setBucketlist([]);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token]);
 
   useEffect(() => {
     console.log('Current route:', location.pathname);
@@ -54,6 +52,12 @@ const AppContent = () => {
   }, [location]);
 
   const loadBucketlist = async () => {
+    // Don't try to load if not authenticated
+    if (!isAuthenticated || !token) {
+      setBucketlist([]);
+      return;
+    }
+    
     try {
       const bucketlistData = await api.bucketlist.getBucketlist(token);
       setBucketlist(bucketlistData);
@@ -122,8 +126,7 @@ const AppContent = () => {
       setBucketlist(prev => prev.filter(item => item.templeId !== templeId));
       
       if (error.message && error.message.includes('already in bucketlist')) {
-        showNotification(`${templeName} is already in your bucketlist.`, 'info');
-        await loadBucketlist(); // Sync state
+        await loadBucketlist(); // Sync state silently
       } else {
         showNotification('Failed to add temple to bucketlist', 'error');
       }

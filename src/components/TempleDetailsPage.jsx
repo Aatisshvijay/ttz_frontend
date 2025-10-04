@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api, getImageUrl } from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // ADD THIS IMPORT
+import { useAuth } from "../context/AuthContext";
 
 const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   const [mapError, setMapError] = useState(false);
@@ -86,16 +86,16 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   );
 };
 
-  const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove, showNotification }) => {
+const TempleDetailsPage = ({ isDarkMode, bucketlist, onAdd, onRemove, showNotification }) => {
   const { templeId } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuth(); // ADD THIS LINE
+  const { token } = useAuth();
   const [temple, setTemple] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showContent, setShowContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [bucketlistLoading, setBucketlistLoading] = useState(false); // ADD THIS
+  const [bucketlistLoading, setBucketlistLoading] = useState(false);
 
   useEffect(() => {
     loadTemple();
@@ -149,50 +149,50 @@ const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
 
   const isInBucketlist = bucketlist.some((item) => item.templeId === temple.id);
 
-const handleBucketlistToggle = async () => {
-  if (bucketlistLoading) return;
-  
-  setBucketlistLoading(true);
-  
-  try {
-    if (isInBucketlist) {
-      // Remove
-      await api.bucketlist.removeItem(token, temple.id);
-      onRemove(temple.id);
-      
-      // Show notification for removal
-      showNotification(`${temple.name} removed from bucketlist`, 'info');
-    } else {
-      // Check before adding
-      if (bucketlist.some(item => item.templeId === temple.id)) {
-        setBucketlistLoading(false);
-        return;
-      }
-      
-      // Add to backend
-      const newItem = await api.bucketlist.addItem(token, temple.id);
-      onAdd(newItem);
-      
-      // Show notification for adding
-      showNotification(`${temple.name} added to your bucketlist!`, 'success');
-    }
-  } catch (error) {
-    console.error('Failed to update bucketlist:', error);
+  const handleBucketlistToggle = async () => {
+    if (bucketlistLoading) return;
     
-    if (error.message && error.message.includes('already in bucketlist')) {
-      const updatedBucketlist = await api.bucketlist.getBucketlist(token);
-      const existingItem = updatedBucketlist.find(item => item.templeId === temple.id);
-      if (existingItem) {
-        onAdd(existingItem);
+    setBucketlistLoading(true);
+    
+    try {
+      if (isInBucketlist) {
+        // Remove
+        await api.bucketlist.removeItem(token, temple.id);
+        onRemove(temple.id);
+        
+        // Show notification for removal
+        showNotification(`${temple.name} removed from bucketlist`, 'info');
+      } else {
+        // Check before adding
+        if (bucketlist.some(item => item.templeId === temple.id)) {
+          setBucketlistLoading(false);
+          return;
+        }
+        
+        // Add to backend
+        const newItem = await api.bucketlist.addItem(token, temple.id);
+        onAdd(newItem);
+        
+        // Show notification for adding
+        showNotification(`${temple.name} added to your bucketlist!`, 'success');
       }
-      showNotification(`${temple.name} is already in your bucketlist`, 'info');
-    } else {
-      showNotification('Failed to update bucketlist', 'error');
+    } catch (error) {
+      console.error('Failed to update bucketlist:', error);
+      
+      // Handle duplicate error silently - sync state without showing notification
+      if (error.message && error.message.includes('already in bucketlist')) {
+        const updatedBucketlist = await api.bucketlist.getBucketlist(token);
+        const existingItem = updatedBucketlist.find(item => item.templeId === temple.id);
+        if (existingItem && !isInBucketlist) {
+          onAdd(existingItem);
+        }
+      } else {
+        showNotification('Failed to update bucketlist', 'error');
+      }
+    } finally {
+      setBucketlistLoading(false);
     }
-  } finally {
-    setBucketlistLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen py-8">
