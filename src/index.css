@@ -1,48 +1,29 @@
-@import "tailwindcss";
-.heading{
-    background-color: rgba(2, 1, 1, 0.95);
-}
-
-/* ------------------------------------------------------------------ */
-/* --- OPTIMIZED CARD ANIMATIONS (GPU-accelerated, staggered entry) --- */
-/* ------------------------------------------------------------------ */
-
-/* 1. Keyframes: Replaces Tailwind's opacity/translate transition */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(1rem); /* 1rem is Tailwind's translate-y-4 */
+    transform: translate3d(0, 1rem, 0); /* Use translate3d for GPU acceleration */
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-/* 2. Base Class (Applied to the card element) */
 .stagger-card-base {
-  /* Set initial state for the keyframe animation */
   opacity: 0;
-  transform: translateY(1rem);
-  /* Optimization: Hint to browser to prepare for transform changes on hover/animation */
-  will-change: opacity, transform;
+  transform: translate3d(0, 1rem, 0);
+  content-visibility: auto; /* Improve rendering performance */
 }
 
-/* 3. Animation Trigger Classes (Define duration and trigger the animation) */
-
-/* For HomePage (duration-700ms) */
 .stagger-card-d700.is-visible {
   animation: fadeInUp 700ms ease-out forwards;
 }
 
-/* For GodTemplesPage, AvatarTemplesPage, CategoryTemplesPage (duration-500ms) */
 .stagger-card-d500.is-visible {
   animation: fadeInUp 500ms ease-out forwards;
 }
 
-/* 4. Staggering Delay Classes (Applied to the PARENT container: grid/flex) */
-
-/* Stagger 100ms (Used in HomePage) */
+/* Stagger 100ms */
 .stagger-container-100ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 100ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 200ms; }
@@ -54,8 +35,7 @@
 .stagger-container-100ms .stagger-card-base:nth-child(9).is-visible { animation-delay: 800ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(10).is-visible { animation-delay: 900ms; }
 
-
-/* Stagger 75ms (Used in GodTemplesPage, AvatarTemplesPage, CategoryTemplesPage) */
+/* Stagger 75ms */
 .stagger-container-75ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 75ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 150ms; }
@@ -66,4 +46,8 @@
 .stagger-container-75ms .stagger-card-base:nth-child(8).is-visible { animation-delay: 525ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(9).is-visible { animation-delay: 600ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(10).is-visible { animation-delay: 675ms; }
-/* Note: For more than 10 items, you would need to add more :nth-child rules */
+.stagger-container-75ms .stagger-card-base:nth-child(11).is-visible { animation-delay: 750ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(12).is-visible { animation-delay: 825ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(13).is-visible { animation-delay: 900ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(14).is-visible { animation-delay: 975ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(15).is-visible { animation-delay: 1050ms; }

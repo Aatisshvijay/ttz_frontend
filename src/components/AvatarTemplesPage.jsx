@@ -44,8 +44,7 @@ const AvatarTemplesPage = ({ isDarkMode }) => {
   if (error) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Error Loading Temples</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{error}</p><button onClick={() => window.location.reload()} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-orange-600 text-white hover:bg-orange-500" : "bg-orange-500 text-white hover:bg-orange-600"}`}>Retry</button></div>;
   if (temples.length === 0) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>No temples found</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>No temples were found for "{categoryName}" under "{godName}".</p><button onClick={() => navigate("/")} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-orange-600 text-white hover:bg-orange-500" : "bg-orange-500 text-white hover:bg-orange-600"}`}>Go to Home</button></div>;
 
-  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 will-change-transform ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
-
+const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
   return (
     <div className="py-8">
       <div className="text-center mb-12">
@@ -54,18 +53,12 @@ const AvatarTemplesPage = ({ isDarkMode }) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-75ms">
         {temples.map((temple, index) => (
-          <div
-            key={temple._id || temple.id || index}
-            // Updated to use useCallback handler
-            onClick={() => handleTempleClick(temple.id || temple._id)}
-            className={`${cardClass} stagger-card-base stagger-card-d500 ${showTemples ? 'is-visible' : ''}`}
-            // Added minHeight for uniform card size
-            style={{ 
-              transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-              transitionDelay: `${index * 75}ms`,
-              minHeight: '400px'
-            }}
-          >
+         <div
+  key={temple._id || temple.id || index}
+  onClick={() => handleTempleClick(temple.id || temple._id)}
+  className={`${cardClass} stagger-card-base stagger-card-d500 ${showTemples ? 'is-visible' : ''}`}
+  style={{ minHeight: '400px' }}
+>
             {/* // Before: className="w-full h-48 object-cover rounded-t-xl" */}
 <OptimizedImage
   src={getImageWithFallback(temple)}

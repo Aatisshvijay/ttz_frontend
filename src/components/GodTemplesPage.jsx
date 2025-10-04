@@ -88,7 +88,7 @@ const GodTemplesPage = ({ isDarkMode }) => {
   if (error) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Error Loading Data</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{error}</p><div className="space-x-4"><button onClick={() => window.location.reload()} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-orange-600 text-white hover:bg-orange-500" : "bg-orange-500 text-white hover:bg-orange-600"}`}>Retry</button><button onClick={() => navigate("/")} className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${isDarkMode ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-500 text-white hover:bg-gray-600"}`}>Go to Home</button></div></div>;
   if (categories.length === 0) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>No temple categories found for "{godName}"</h2><p className={`text-lg mb-6 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>The deity "{godName}" could not be found in our database, or no temples are available.</p></div>;
 
-  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 will-change-transform ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
+  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
 
   return (
     <div className="py-8">
@@ -97,15 +97,11 @@ const GodTemplesPage = ({ isDarkMode }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {categories.map((category, index) => (
           <div
-            key={category.name || index}
-            onClick={() => handleCategoryClick(category.name)}
-            className={`${cardClass} ${showCategories ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            style={{ 
-              transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-              transitionDelay: `${index * 75}ms`,
-              minHeight: '400px'
-            }}
-          >
+  key={category.name || index}
+  onClick={() => handleCategoryClick(category.name)}
+  className={`${cardClass} stagger-card-base stagger-card-d500 ${showCategories ? 'is-visible' : ''}`}
+  style={{ minHeight: '400px' }}
+>
             <OptimizedImage
               src={category.image}
               alt={category.name}
