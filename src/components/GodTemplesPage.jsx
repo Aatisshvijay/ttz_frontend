@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import OptimizedImage from "./OptimizedImage";
@@ -10,7 +10,6 @@ const GodTemplesPage = ({ isDarkMode }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showCategories, setShowCategories] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +40,6 @@ const GodTemplesPage = ({ isDarkMode }) => {
           transformedCategories = transformedCategories.sort((a, b) => a.name.localeCompare(b.name));
         }
         setCategories(transformedCategories);
-        setTimeout(() => setShowCategories(true), 50);
       } catch (error) {
         console.error("GodTemplesPage: Error fetching data:", error);
         setError(error.message || "Failed to fetch temple data");
@@ -94,14 +92,14 @@ const GodTemplesPage = ({ isDarkMode }) => {
     <div className="py-8">
       <h1 className={`text-4xl md:text-5xl font-bold mb-4 text-center ${isDarkMode ? "text-white" : "text-gray-900"}`}>{godName}</h1>
       <p className={`text-lg text-center mb-8 max-w-2xl mx-auto ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>Explore the sacred temples and spiritual destinations dedicated to {godName}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-75ms">
         {categories.map((category, index) => (
           <div
-  key={category.name || index}
-  onClick={() => handleCategoryClick(category.name)}
-  className={`${cardClass} stagger-card-base stagger-card-d500 ${showCategories ? 'is-visible' : ''}`}
-  style={{ minHeight: '400px' }}
->
+            key={category.name || index}
+            onClick={() => handleCategoryClick(category.name)}
+            className={`${cardClass} stagger-card-base`}
+            style={{ minHeight: '400px' }}
+          >
             <OptimizedImage
               src={category.image}
               alt={category.name}

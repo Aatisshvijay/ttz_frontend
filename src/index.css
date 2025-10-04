@@ -1,67 +1,45 @@
 @import "tailwindcss";
 
+.heading {
+    background-color: rgba(2, 1, 1, 0.95);
+}
 
-
-/* ------------------------------------------------------------------ */
-/* --- CLS-OPTIMIZED ANIMATIONS --- */
-/* ------------------------------------------------------------------ */
-
-@keyframes fadeInUp {
+/* Simple fade-in only - no transform/translate that causes CLS */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translate3d(0, 1rem, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
-/* CRITICAL FIX: Reserve space immediately, don't start invisible */
 .stagger-card-base {
-  min-height: 400px; /* Reserve space from the start */
-  opacity: 1; /* Start visible to avoid CLS */
-  transform: translate3d(0, 0, 0);
-}
-
-/* Only animate when specifically triggered */
-.stagger-card-base:not(.is-visible) {
+  min-height: 400px;
   opacity: 0;
-  transform: translate3d(0, 1rem, 0);
-}
-
-.stagger-card-d700.is-visible {
-  animation: fadeInUp 700ms ease-out forwards;
-}
-
-.stagger-card-d500.is-visible {
-  animation: fadeInUp 500ms ease-out forwards;
+  animation: fadeIn 400ms ease-out forwards;
 }
 
 /* Stagger delays */
-.stagger-container-100ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 100ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 200ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(4).is-visible { animation-delay: 300ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(5).is-visible { animation-delay: 400ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(6).is-visible { animation-delay: 500ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(7).is-visible { animation-delay: 600ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(8).is-visible { animation-delay: 700ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(9).is-visible { animation-delay: 800ms; }
-.stagger-container-100ms .stagger-card-base:nth-child(10).is-visible { animation-delay: 900ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(1) { animation-delay: 0ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(2) { animation-delay: 75ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(3) { animation-delay: 150ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(4) { animation-delay: 225ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(5) { animation-delay: 300ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(6) { animation-delay: 375ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(7) { animation-delay: 450ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(8) { animation-delay: 525ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(9) { animation-delay: 600ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(10) { animation-delay: 675ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(11) { animation-delay: 750ms; }
+.stagger-container-75ms .stagger-card-base:nth-child(12) { animation-delay: 825ms; }
 
-.stagger-container-75ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 75ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 150ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(4).is-visible { animation-delay: 225ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(5).is-visible { animation-delay: 300ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(6).is-visible { animation-delay: 375ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(7).is-visible { animation-delay: 450ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(8).is-visible { animation-delay: 525ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(9).is-visible { animation-delay: 600ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(10).is-visible { animation-delay: 675ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(11).is-visible { animation-delay: 750ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(12).is-visible { animation-delay: 825ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(13).is-visible { animation-delay: 900ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(14).is-visible { animation-delay: 975ms; }
-.stagger-container-75ms .stagger-card-base:nth-child(15).is-visible { animation-delay: 1050ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(1) { animation-delay: 0ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(2) { animation-delay: 100ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(3) { animation-delay: 200ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(4) { animation-delay: 300ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(5) { animation-delay: 400ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(6) { animation-delay: 500ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(7) { animation-delay: 600ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(8) { animation-delay: 700ms; }
+.stagger-container-100ms .stagger-card-base:nth-child(9) { animation-delay: 800ms; }

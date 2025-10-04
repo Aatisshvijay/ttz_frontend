@@ -9,7 +9,6 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
   const [temples, setTemples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showTemples, setShowTemples] = useState(false);
 
   const shouldEagerLoad = (index) => index < 3;
 
@@ -21,7 +20,6 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
         const response = await api.temples.getAvatarTemples(godName, categoryName);
         if (Array.isArray(response)) {
           setTemples(response);
-          setTimeout(() => setShowTemples(true), 50);
         } else {
           setTemples([]);
         }
@@ -35,7 +33,6 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
     if (godName && categoryName) fetchData();
   }, [godName, categoryName]);
 
-  // Added useCallback for the click handler
   const handleTempleClick = useCallback((templeId) => {
     navigate(`/temple/${templeId}`);
   }, [navigate]);
@@ -43,29 +40,27 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
   if (loading) return <div className="flex items-center justify-center py-16"><div className={`text-xl ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Loading temples for "{categoryName}"...</div></div>;
   if (error || temples.length === 0) return <div className="text-center py-12"><h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{error || 'No temples found for this category.'}</h2><p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>The divine shrines are yet to be added or the data is unavailable.</p></div>;
   
-  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 ${isDarkMode ? "bg-gray-800 text-gray-100 hover:shadow-gray-700" : "bg-white text-gray-800"}`;
+  const cardClass = `rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 ${isDarkMode ? 'bg-gray-800 text-gray-100 hover:shadow-gray-700' : 'bg-white text-gray-800'}`;
 
   return (
     <div className="py-8">
       <h1 className={`text-4xl md:text-5xl font-bold mb-8 text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{categoryName} Temples</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-75ms">
         {temples.map((temple, index) => (
-         <div
-  key={temple._id || temple.id || index}
-  onClick={() => handleTempleClick(temple.id || temple._id)}
-  className={`${cardClass} stagger-card-base stagger-card-d500 ${showTemples ? 'is-visible' : ''}`}
-  style={{ minHeight: '400px' }}
->
-            {/* // Before: className="w-full h-48 object-cover rounded-t-xl" */}
-<OptimizedImage 
-  src={getImageWithFallback(temple)} 
-  alt={temple.name} 
-  // FIX: Removed h-48 as OptimizedImage now manages vertical space via aspect ratio
-  className="w-full object-cover rounded-t-xl"
-  width={400} 
-  height={192} 
-  eagerLoad={shouldEagerLoad(index)}
-/>
+          <div
+            key={temple.id || temple._id}
+            onClick={() => handleTempleClick(temple.id || temple._id)}
+            className={`${cardClass} stagger-card-base`}
+            style={{ minHeight: '400px' }}
+          >
+            <OptimizedImage 
+              src={getImageWithFallback(temple)} 
+              alt={temple.name} 
+              className="w-full object-cover rounded-t-xl"
+              width={400} 
+              height={192} 
+              eagerLoad={shouldEagerLoad(index)}
+            />
             <div className="p-6">
               <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{temple.name}</h2>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{temple.location}</p>
