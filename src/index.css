@@ -2,10 +2,14 @@
 
 
 
+/* ------------------------------------------------------------------ */
+/* --- CLS-OPTIMIZED ANIMATIONS --- */
+/* ------------------------------------------------------------------ */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translate3d(0, 1rem, 0); /* Use translate3d for GPU acceleration */
+    transform: translate3d(0, 1rem, 0);
   }
   to {
     opacity: 1;
@@ -13,10 +17,17 @@
   }
 }
 
+/* CRITICAL FIX: Reserve space immediately, don't start invisible */
 .stagger-card-base {
+  min-height: 400px; /* Reserve space from the start */
+  opacity: 1; /* Start visible to avoid CLS */
+  transform: translate3d(0, 0, 0);
+}
+
+/* Only animate when specifically triggered */
+.stagger-card-base:not(.is-visible) {
   opacity: 0;
   transform: translate3d(0, 1rem, 0);
-  content-visibility: auto; /* Improve rendering performance */
 }
 
 .stagger-card-d700.is-visible {
@@ -27,7 +38,7 @@
   animation: fadeInUp 500ms ease-out forwards;
 }
 
-/* Stagger 100ms */
+/* Stagger delays */
 .stagger-container-100ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 100ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 200ms; }
@@ -39,7 +50,6 @@
 .stagger-container-100ms .stagger-card-base:nth-child(9).is-visible { animation-delay: 800ms; }
 .stagger-container-100ms .stagger-card-base:nth-child(10).is-visible { animation-delay: 900ms; }
 
-/* Stagger 75ms */
 .stagger-container-75ms .stagger-card-base:nth-child(1).is-visible { animation-delay: 0ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(2).is-visible { animation-delay: 75ms; }
 .stagger-container-75ms .stagger-card-base:nth-child(3).is-visible { animation-delay: 150ms; }
