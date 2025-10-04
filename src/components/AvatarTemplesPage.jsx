@@ -55,7 +55,7 @@ const AvatarTemplesPage = ({ isDarkMode }) => {
             key={temple._id || temple.id || index}
             onClick={() => handleTempleClick(temple.id || temple._id)}
             className={`${cardClass} stagger-card-base`}
-            style={{ minHeight: '400px' }}
+            style={{ minHeight: '320px' }}
           >
             <OptimizedImage
               src={getImageWithFallback(temple)}

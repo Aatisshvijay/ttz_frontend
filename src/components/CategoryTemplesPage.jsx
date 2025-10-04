@@ -51,7 +51,7 @@ const CategoryTemplesPage = ({ isDarkMode }) => {
             key={temple.id || temple._id}
             onClick={() => handleTempleClick(temple.id || temple._id)}
             className={`${cardClass} stagger-card-base`}
-            style={{ minHeight: '400px' }}
+            style={{ minHeight: '320px' }}
           >
             <OptimizedImage 
               src={getImageWithFallback(temple)} 

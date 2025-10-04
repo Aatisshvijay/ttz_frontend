@@ -98,7 +98,7 @@ const GodTemplesPage = ({ isDarkMode }) => {
             key={category.name || index}
             onClick={() => handleCategoryClick(category.name)}
             className={`${cardClass} stagger-card-base`}
-            style={{ minHeight: '400px' }}
+            style={{ minHeight: '320px' }}
           >
             <OptimizedImage
               src={category.image}
