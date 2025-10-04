@@ -1,3 +1,7 @@
+@import "tailwindcss";
+
+
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
