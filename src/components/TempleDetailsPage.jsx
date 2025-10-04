@@ -169,14 +169,7 @@ const handleBucketlistToggle = async () => {
       }
     }
   } catch (error) {
-    console.error('Failed to update bucketlist:', error);
-    
-    // Don't show "already in bucketlist" if it's actually in the list
-    if (error.message && error.message.includes('already in bucketlist')) {
-      // Just silently ignore - it's already there
-      return;
-    }
-    alert('Failed to update bucketlist. Please try again.');
+    // ... error handling
   } finally {
     setBucketlistLoading(false);
   }

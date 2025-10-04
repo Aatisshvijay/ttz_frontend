@@ -71,6 +71,8 @@ const AppContent = () => {
     }, 3000);
   };
 
+// Replace the handleAddToBucketlist function in App.jsx with this:
+
 const handleAddToBucketlist = async (temple) => {
   try {
     setLoading(true);
@@ -78,7 +80,15 @@ const handleAddToBucketlist = async (temple) => {
     const templeId = temple.templeId || temple.id;
     const templeName = temple.templeName || temple.name;
     
-    // Don't check locally - let backend handle it
+    // Check if already in bucketlist BEFORE trying to add
+    const isAlreadyInList = bucketlist.some(item => item.templeId === templeId);
+    
+    if (isAlreadyInList) {
+      showNotification(`${templeName} is already in your bucketlist.`, 'info');
+      return;
+    }
+    
+    // Add to backend
     await api.bucketlist.addItem(token, templeId);
     
     // Reload the entire bucketlist from backend to ensure sync
@@ -88,9 +98,13 @@ const handleAddToBucketlist = async (temple) => {
     
   } catch (error) {
     console.error('Failed to add to bucketlist:', error);
+    
+    // Only show error if it's NOT a duplicate error
     if (error.message.includes('already in bucketlist') || error.message.includes('already')) {
       const templeName = temple.templeName || temple.name || 'Temple';
       showNotification(`${templeName} is already in your bucketlist.`, 'info');
+      // Reload to sync state
+      await loadBucketlist();
     } else {
       showNotification('Failed to add temple to bucketlist', 'error');
     }
