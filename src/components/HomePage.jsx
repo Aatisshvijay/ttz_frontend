@@ -8,40 +8,62 @@ const HomePage = ({ isDarkMode, navigate }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Hardcoded list defining the FINAL DISPLAY ORDER
+  const originalDeities = [
+    "Maha Avatars of Vishnu",
+    "Lord Shiva", 
+    "Goddess Shakti",
+    "Goddess Lakshmi",
+    "Lord Hanuman",
+    "Lord Ganesha",
+    "Lord Murugan",
+    "Lord Ayyappa",
+    "Navagraha Temples"
+  ];
+  
   useEffect(() => {
     const fetchDeities = async () => {
       try {
         setLoading(true);
         const data = await api.temples.getDeities(); 
-        console.log('Fetched deities:', data);
         
         if (data && data.length > 0) {
-          // Preload first 3 images (visible on load)
-          const visiblePromises = transformedCategories.slice(0, 3).map(category => {
+          
+          // 1. Create the lookup map (deity name -> deity object)
+          const deityLookup = data.reduce((acc, deity) => {
+            acc[deity.name] = deity;
+            return acc;
+          }, {});
+
+          // 2. Identify the first 3 deities in the correct display order
+          const top3Deities = originalDeities
+            .filter(name => deityLookup[name]) // Only include available deities
+            .slice(0, 3) // Take the first 3 names
+            .map(name => deityLookup[name]); // Map back to the deity object
+
+          // 3. Preload the images for the first 3 (CRITICAL FIX)
+          const visiblePromises = top3Deities.map(deity => {
             return new Promise((resolve) => {
-              if (category.image) {
+              if (deity.image) {
                 const img = new Image();
                 img.onload = resolve;
-                // Resolve on error too, so a single broken image doesn't block the UI
-                img.onerror = resolve; 
-                img.src = category.image;
+                img.onerror = resolve; // Resolve on error so a single failure doesn't block the UI
+                img.src = deity.image;
               } else {
                 resolve();
               }
             });
-        });
+          });
           
-          await Promise.all(visiblePromises);
+          // Wait for the first 3 images to finish loading (or fail gracefully)
+          await Promise.allSettled(visiblePromises);
+          
           setDeities(data);
           setLoading(false);
           
-          // Preload remaining images in background (non-blocking)
-          data.slice(3).forEach(deity => {
-            if (deity.image) {
-              const img = new Image();
-              img.src = deity.image;
-            }
-          });
+          // NOTE: Removed the redundant data.slice(3) preload loop. 
+          // The browser's default lazy loading is now sufficient.
+          
         } else {
           setDeities(data);
           setLoading(false);
@@ -55,7 +77,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
     };
 
     fetchDeities();
-  }, []);
+  }, []); // Empty dependency array, runs once on mount
 
   const DeityCardSkeleton = () => (
     <div className={`rounded-xl shadow-lg overflow-hidden cursor-pointer p-8 flex flex-col items-center justify-center text-center animate-pulse ${
@@ -86,18 +108,6 @@ const HomePage = ({ isDarkMode, navigate }) => {
     acc[deity.name] = deity;
     return acc;
   }, {});
-
-  const originalDeities = [
-    "Maha Avatars of Vishnu",
-    "Lord Shiva", 
-    "Goddess Shakti",
-    "Goddess Lakshmi",
-    "Lord Hanuman",
-    "Lord Ganesha",
-    "Lord Murugan",
-    "Lord Ayyappa",
-    "Navagraha Temples"
-  ];
 
   const availableDeities = originalDeities.filter(name => deityLookup[name]);
 
@@ -240,7 +250,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-container-100ms" style={{ minHeight: '1000px' }}>
-        {availableDeities.map((deityName) => (
+        {availableDeities.map((deityName, index) => (
           <div
             key={deityName}
             onClick={() => {
@@ -261,8 +271,8 @@ const HomePage = ({ isDarkMode, navigate }) => {
                 src={getDeityImage(deityName)}
                 alt={deityName}
                 className="object-contain max-h-full max-w-full rounded-2xl"
-                loading="lazy"
-                
+                // CRITICAL FIX: Use 'eager' for the first 3 images to prevent CLS
+                loading={index < 3 ? 'eager' : 'lazy'} 
               />
             </div>
             <h2 className="text-2xl font-bold mb-2">{deityName}</h2>
