@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import LoginPage from './components/LoginPage';
 import ScrollToTop from './components/ScrollToTop'; 
 
+
 // Import AuthContext
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 
