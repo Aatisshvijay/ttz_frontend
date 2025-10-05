@@ -11,6 +11,7 @@ import BucketlistPage from './components/BucketlistPage';
 import SearchPage from './components/SearchPage';
 import Footer from './components/Footer';
 import LoginPage from './components/LoginPage';
+import ScrollToTop from './components/ScrollToTop'; 
 
 // Import AuthContext
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
@@ -183,7 +184,7 @@ const AppContent = () => {
         bucketlistCount={bucketlist.length}
         onSearch={handleSearch}
       />
-
+      <ScrollToTop />
       <main className="container mx-auto px-4 py-8 flex-grow" style={{ minHeight: 'calc(100vh - 80px - 200px)' }}>
         <Routes>
           <Route 
