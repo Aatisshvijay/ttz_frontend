@@ -71,7 +71,7 @@ const LoginPage = ({ isDarkMode }) => {
                 TempleTravellerZ
               </h1>
               <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                Mandir Tails, Modern Trails
+                Mandir Tales, Modern Trails
               </p>
               <h2 className={`mt-2 text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
                 {isSignUp ? 'Join our community of travellerz' : 'Welcome back'}
