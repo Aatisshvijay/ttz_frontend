@@ -140,7 +140,7 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
               <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">
                 TempleTravellerZ
               </h1>
-              <span className='text-xs md:text-sm font-normal text-center whitespace-nowrap'>Mandir Tails, Modern Trails</span>
+              <span className='text-xs md:text-sm font-normal text-center whitespace-nowrap'>Find Your Temple. Find Yourself.</span>
             </div>
           </div>
         </div>
