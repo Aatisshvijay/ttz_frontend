@@ -16,7 +16,7 @@ const Footer = () => {
           <div className="flex space-x-4">
             {/* Email */}
             <a
-              href="mailto:contact@templetravellerz.com"
+              href="mailto:templetravellerz@gmail.com"
               target='_blank'
               rel="noopener noreferrer"
               className="text-white hover:text-gray-200 transition-colors"
