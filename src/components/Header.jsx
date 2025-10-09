@@ -134,27 +134,27 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
     <header className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 shadow-2xl relative z-50 md:sticky md:top-0">
       <div className="container mx-auto px-3 flex flex-col items-center md:flex-row md:justify-between md:items-center md:gap-6">
         {/* Left Section: Logo and TTZ Wording */}
-        <div className="flex justify-center items-center w-full md:w-auto md:flex-shrink-0">
-          <div 
-            className="flex items-center cursor-pointer" 
-            onClick={() => navigate('/')}
-          >
-            <img 
-              src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162425/logo3_r9jcyb.png"
-              // src="/lo.png" 
-              width={80} 
-              height={80} 
-              alt="TempleTravellerZ Logo"
-              loading="eager"
-            />
-            <div className="flex flex-col items-center">
-              <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">
-                TempleTravellerZ
-              </h1>
-              <span className='text-xs md:text-sm font-normal text-center whitespace-nowrap'>Mandir Tales, Modern Trails</span>
-            </div>
-          </div>
-        </div>
+       <div className="flex justify-center items-center w-full md:w-auto md:flex-shrink-0">
+  <div 
+    className="flex items-center cursor-pointer" 
+    onClick={() => navigate('/')}
+  >
+    <img 
+      src="/https://res.cloudinary.com/dto53p1cf/image/upload/v1760019413/final_mby3yk.png" 
+      width={80} 
+      height={80} 
+      alt="TempleTravellerZ Logo"
+      loading="eager"
+      className="-mt-1.5" 
+    />
+    <div className="flex flex-col mt-0.5"> 
+      <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">
+        TempleTravellerZ
+      </h1>
+      <span className='text-xs md:text-sm px-1 font-normal whitespace-nowrap'>Mandir Tales, Modern Trails</span>
+    </div>
+  </div>
+</div>
 
         {/* Center: Enhanced Search Bar */}
         <div className="relative w-full md:flex-grow mt-4 md:mt-0 mx-auto md:max-w-xs lg:max-w-sm">
