@@ -13,6 +13,16 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
   const userMenuRef = useRef(null);
   const { user, logout, isAuthenticated } = useAuth();
 
+  // Preload header logo on mount
+  useEffect(() => {
+    const preloadLogo = () => {
+      const img = new Image();
+      img.src = 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759162425/logo3_r9jcyb.png';
+    };
+    
+    preloadLogo();
+  }, []);
+
   // Enhanced search suggestions with categories
   const searchSuggestions = [
     { term: 'Arupadaiveedu', category: 'Murugan Category', description: 'Six sacred abodes of Lord Murugan' },
@@ -134,7 +144,8 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
               // src="/lo.png" 
               width={80} 
               height={80} 
-              alt="TempleTravellerZ Logo" 
+              alt="TempleTravellerZ Logo"
+              loading="eager"
             />
             <div className="flex flex-col items-center">
               <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">

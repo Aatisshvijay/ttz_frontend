@@ -15,9 +15,8 @@ const Footer = () => {
           {/* Social Media Links */}
           <div className="flex space-x-4">
             {/* Email */}
-            <a
+             <a
               href="mailto:templetravellerz@gmail.com"
-              target='_blank'
               rel="noopener noreferrer"
               className="text-white hover:text-gray-200 transition-colors"
               aria-label="Email"

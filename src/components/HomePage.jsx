@@ -22,6 +22,21 @@ const HomePage = ({ isDarkMode, navigate }) => {
   ];
   
   useEffect(() => {
+    // Preload critical images (header logo and namaste logo)
+    const preloadCriticalImages = () => {
+      const criticalImages = [
+        'https://res.cloudinary.com/dto53p1cf/image/upload/v1759162425/logo3_r9jcyb.png', // Header logo
+        'https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png' // Namaste logo
+      ];
+      
+      criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+    };
+    
+    preloadCriticalImages();
+    
     const fetchDeities = async () => {
       try {
         setLoading(true);
@@ -155,7 +170,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
           isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
         } text-white`} style={{ minHeight: '300px' }}>
           <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-            <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
+            <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" loading="eager" />
           </h1>
           <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
           <p className="text-xl md:text-2xl text-center opacity-90">
@@ -218,7 +233,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
         isDarkMode ? "from-orange-400 to-red-500" : "from-orange-400 to-red-500"
       } text-white`} style={{ minHeight: '300px' }}>
         <h1 className="text-6xl md:text-8xl font-extrabold mb-4">
-          <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" />
+          <img src="https://res.cloudinary.com/dto53p1cf/image/upload/v1759162414/na_pkhakb.png" className="max-h-40 w-auto" alt="Namaste" loading="eager" />
         </h1>
         <h2 className="text-4xl md:text-6xl font-bold mb-4">Namaste</h2>
         <p className="text-xl md:text-2xl text-center opacity-90">
