@@ -140,7 +140,7 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
     onClick={() => navigate('/')}
   >
     <img 
-      src="/https://res.cloudinary.com/dto53p1cf/image/upload/v1760019413/final_mby3yk.png" 
+      src="https://res.cloudinary.com/dto53p1cf/image/upload/v1760019413/final_mby3yk.png" 
       width={80} 
       height={80} 
       alt="TempleTravellerZ Logo"
