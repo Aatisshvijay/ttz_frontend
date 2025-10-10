@@ -180,7 +180,7 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
-            <div className="text-2xl font-bold text-orange-500">250+</div>
+            <div className="text-2xl font-bold text-orange-500">350+</div>
             <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Sacred Temples</div>
           </div>
           <div className={`text-center p-6 rounded-2xl shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`} style={{ minHeight: '100px' }}>
