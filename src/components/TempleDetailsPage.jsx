@@ -295,24 +295,24 @@ const TempleDetailsPage = ({
               </div>
             )}
 
-            {temple.description && (
-              <div className="space-y-3">
-                <h4
-                  className={`text-lg font-semibold ${
-                    isDarkMode ? "text-gray-200" : "text-gray-800"
-                  }`}
-                >
-                  Temple Story
-                </h4>
-                <p
-                  className={`text-base leading-relaxed ${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  {temple.description}
-                </p>
-              </div>
-            )}
+           {temple.description && (
+  <div className="space-y-3">
+    <h4
+      className={`text-lg font-semibold ${
+        isDarkMode ? "text-gray-200" : "text-gray-800"
+      }`}
+    >
+      Temple Story
+    </h4>
+    <p
+      className={`text-base leading-relaxed whitespace-pre-wrap ${
+        isDarkMode ? "text-gray-300" : "text-gray-700"
+      }`}
+    >
+      {temple.description}
+    </p>
+  </div>
+)}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
               {temple.significance && (
