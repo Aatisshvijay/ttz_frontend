@@ -309,31 +309,59 @@ const searchResults = await api.temples.searchTemples(searchQuery);
                     </p>
                   )}
                   
-                  {temple.significance && (
+                  {/* {temple.significance && (
                     <p className={`text-xs italic line-clamp-2 ${
                       isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       <span className="font-medium">Significance:</span> {temple.significance}
                     </p>
-                  )}
+                  )} */}
 
-                  {/* Enhanced best time and festivals info */}
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                    {temple.bestTime && (
-                      <span className={`px-2 py-1 rounded ${
-                        isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        Best: {temple.bestTime}
-                      </span>
-                    )}
-                    {temple.festivals && (
-                      <span className={`px-2 py-1 rounded ${
-                        isDarkMode ? 'bg-orange-900 text-orange-200' : 'bg-orange-100 text-orange-700'
-                      }`}>
-                        {temple.festivals.split(',')[0].trim()}
-                      </span>
-                    )}
-                  </div>
+                  
+              <div className="flex items-center justify-center space-x-2 w-full mb-3">
+                <div className="flex items-center w-full max-w-xs mx-auto my-1">
+                  {/* Left Separator Line */}
+                  <div
+                    className={`flex-grow h-px ${
+                      isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                    }`}
+                  ></div>
+
+                  {/* Text: view details with Arrow */}
+                  <p
+                    className={`px-3 text-xs italic ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    <span className="font-medium flex items-center space-x-1">
+                      <span>view details</span>
+                      {/* Right-pointing arrow */}
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5l7 7-7 7"
+                        ></path>
+                      </svg>
+                    </span>
+                  </p>
+
+                  {/* Right Separator Line */}
+                  <div
+                    className={`flex-grow h-px ${
+                      isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                    }`}
+                  ></div>
+                </div>
+              </div>
+
                 </div>
               </div>
             ))}
