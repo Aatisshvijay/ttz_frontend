@@ -3,6 +3,42 @@ import { api, getImageUrl } from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+// --- New Component for Celestial Abodes (Kept for completeness, though conditional rendering below will hide it) ---
+const CelestialAbodeCard = ({ templeName, isDarkMode, location, description }) => {
+  return (
+    <div
+      className={`w-full p-6 rounded-2xl shadow-xl transition-colors duration-300 ${
+        isDarkMode
+          ? "bg-gray-800 border border-purple-500/50"
+          : "bg-white border border-purple-200"
+      }`}
+    >
+      <div className="flex items-center space-x-3 mb-4">
+        <span className="text-3xl">✨</span>
+        <h4
+          className={`text-xl font-bold ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          {templeName} - A Celestial Abode
+        </h4>
+      </div>
+      <div className="space-y-3">
+        <p className={`text-base italic ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
+          Location: {location}
+        </p>
+        <p className={`text-sm leading-relaxed ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+          {description}
+        </p>
+        <p className={`text-sm pt-2 font-medium ${isDarkMode ? "text-yellow-400" : "text-yellow-700"}`}>
+          This Divya Desam is not physically locatable and is only reachable through intense spiritual devotion.
+        </p>
+      </div>
+    </div>
+  );
+};
+// ----------------------------------------
+
 const SimpleTempleMap = ({ location, templeName, isDarkMode }) => {
   const [mapError, setMapError] = useState(false);
 
@@ -175,6 +211,17 @@ const TempleDetailsPage = ({
   }
 
   const isInBucketlist = bucketlist.some((item) => item.templeId === temple.id);
+  
+  // Logic to check for the two celestial Divya Desams
+  const isCelestialAbode = 
+    (temple.location && temple.location.toLowerCase().includes("celestial")) ||
+    (temple.state && temple.state.toLowerCase().includes("celestial"));
+
+  // New logic to specifically hide map/bucketlist for dd107 and dd108
+  const isNonInteractiveCelestial = (temple.id === "dd107" || temple.id === "dd108");
+
+  // Determine if interactive elements (map/bucketlist) should be shown
+  const showInteractiveElements = !isNonInteractiveCelestial;
 
   const handleBucketlistToggle = async () => {
     if (bucketlistLoading) return;
@@ -391,46 +438,59 @@ const TempleDetailsPage = ({
               )}
             </div>
 
-            {temple.location && (
+            {/* CONDITIONAL RENDERING FOR MAP/CELESTIAL CARD */}
+            {showInteractiveElements && temple.location && (
               <div className="space-y-3">
                 <h4
                   className={`text-lg font-semibold ${
                     isDarkMode ? "text-gray-200" : "text-gray-800"
                   }`}
                 >
-                  Location Map
+                  {isCelestialAbode ? "Spiritual Information" : "Location Map"}
                 </h4>
-                <SimpleTempleMap
-                  location={temple.location}
-                  templeName={temple.name}
-                  isDarkMode={isDarkMode}
-                />
+                {isCelestialAbode ? (
+                  <CelestialAbodeCard
+                    templeName={temple.name}
+                    isDarkMode={isDarkMode}
+                    location={temple.location}
+                    description={temple.description}
+                  />
+                ) : (
+                  <SimpleTempleMap
+                    location={temple.location}
+                    templeName={temple.name}
+                    isDarkMode={isDarkMode}
+                  />
+                )}
               </div>
             )}
 
-            <div className="flex justify-center pt-6">
-              <button
-                onClick={handleBucketlistToggle}
-                disabled={bucketlistLoading}
-                className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  bucketlistLoading ? "opacity-50 cursor-not-allowed" : ""
-                } ${
-                  isInBucketlist
-                    ? isDarkMode
-                      ? "bg-red-600 hover:bg-red-500 text-white"
-                      : "bg-red-500 hover:bg-red-600 text-white"
-                    : isDarkMode
-                    ? "bg-orange-600 hover:bg-orange-500 text-white"
-                    : "bg-orange-500 hover:bg-orange-600 text-white"
-                }`}
-              >
-                {bucketlistLoading
-                  ? "Processing..."
-                  : isInBucketlist
-                  ? "- Remove from Bucketlist"
-                  : "+ Add to Bucketlist"}
-              </button>
-            </div>
+            {/* CONDITIONAL RENDERING FOR BUCKETLIST BUTTON */}
+            {showInteractiveElements && (
+              <div className="flex justify-center pt-6">
+                <button
+                  onClick={handleBucketlistToggle}
+                  disabled={bucketlistLoading}
+                  className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                    bucketlistLoading ? "opacity-50 cursor-not-allowed" : ""
+                  } ${
+                    isInBucketlist
+                      ? isDarkMode
+                        ? "bg-red-600 hover:bg-red-500 text-white"
+                        : "bg-red-500 hover:bg-red-600 text-white"
+                      : isDarkMode
+                      ? "bg-orange-600 hover:bg-orange-500 text-white"
+                      : "bg-orange-500 hover:bg-orange-600 text-white"
+                  }`}
+                >
+                  {bucketlistLoading
+                    ? "Processing..."
+                    : isInBucketlist
+                    ? "- Remove from Bucketlist"
+                    : "+ Add to Bucketlist"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
