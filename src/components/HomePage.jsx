@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Gita from "./Gita";
 import { api } from '../services/api';
+import TemplePackages from './TemplePackages';
 
-const HomePage = ({ isDarkMode, navigate }) => {
+
+const HomePage = ({ isDarkMode }) => {
+  const navigate = useNavigate();
   const [deities, setDeities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -258,9 +261,20 @@ const HomePage = ({ isDarkMode, navigate }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      <div className="text-center mb-4" style={{ minHeight: '80px' }}>
-        <h2 className="text-3xl font-bold mb-8 text-center">
-          Choose Your Divine Journey
+      <TemplePackages 
+    isDarkMode={isDarkMode}
+    onPackageClick={(pkg) => {
+      if (pkg.id === 'view-all') {
+        navigate('/packages');
+      } else {
+        navigate(`/packages/${pkg.id}`);
+      }
+    }}
+  />
+
+      <div className="text-center mb-2" style={{ minHeight: '80px' }}>
+        <h2 className="text-3xl font-bold mb-4 text-center">
+      Choose Your Divine Journey 🪷
         </h2>
       </div>
       

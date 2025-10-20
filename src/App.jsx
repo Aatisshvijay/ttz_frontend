@@ -12,6 +12,7 @@ import SearchPage from './components/SearchPage';
 import Footer from './components/Footer';
 import LoginPage from './components/LoginPage';
 import ScrollToTop from './components/ScrollToTop'; 
+import PackageTemplesPage from './components/PackageTemplesPage';
 
 
 // Import AuthContext
@@ -198,6 +199,34 @@ const AppContent = () => {
             } 
           />
           
+          {/* CRITICAL FIX: Add the non-dynamic /packages route for 'View All Packages' */}
+          <Route 
+            path="/packages" 
+            element={
+              // IMPORTANT: Replace this placeholder div with your dedicated component (e.g., AllPackagesPage)
+              <div className="text-center py-16">
+                <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  All Temple Packages List
+                </h2>
+                <p className={`text-lg mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  The routing issue for '/packages' is now corrected. Please replace this element with your dedicated component for listing all packages.
+                </p>
+                <button
+                  onClick={() => navigate("/")}
+                  className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300 ${
+                    isDarkMode
+                      ? "bg-orange-600 text-white hover:bg-orange-500"
+                      : "bg-orange-500 text-white hover:bg-orange-600"
+                  }`}
+                >
+                  Go to Home
+                </button>
+              </div>
+            } 
+          />
+
+          <Route path="/packages/:packageId" element={<PackageTemplesPage isDarkMode={isDarkMode} />} />
+
           <Route 
             path="/search" 
             element={

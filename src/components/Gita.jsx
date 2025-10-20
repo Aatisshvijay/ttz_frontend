@@ -129,9 +129,11 @@ const Gita = ({ isDarkMode }) => {
   
   return (
     <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} py-8`}>
-      {/* Words of Wisdom - Shlokas from Bhagavad Gita */}
+      
       <div className="mb-12">
-        <h2 className={`text-3xl font-bold text-center mb-6 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Shloka of the Day (From Bhagvad Gita)</h2>
+        <h2 className={`text-3xl font-bold text-center mb-8 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}> Shloka of the Day
+          <span className='mt-2 text-3xl italic'>  (From Bhagavad Gita)</span> 🧘
+        </h2>
         <div className="flex justify-center ">
           <div className={shlokaContainer} >
             <p className="text-lg font-semibold text-orange-600">{dailyShloka.topic}</p>
