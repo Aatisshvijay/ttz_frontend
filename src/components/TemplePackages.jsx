@@ -15,7 +15,7 @@ const TemplePackages = ({ isDarkMode, onPackageClick }) => {
       image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1760706892/dd105_svznf8.jpg',
       
       season: 'May-October',
-      description: 'Complete sacred circuit of Uttarakhand\'s four holy shrines'
+      description: 'Complete sacred circuit of India\'s four holy shrines'
     },
     {
       id: 'divya-desam-south',
@@ -26,8 +26,22 @@ const TemplePackages = ({ isDarkMode, onPackageClick }) => {
       image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1760705799/dd1_beavbf.jpg',
       
       season: 'Oct-March',
-      description: 'Visit the most important Vishnu temples in South India'
+      description: 'Visit the most important divya desam temples in South India'
     },
+    {
+  id: 'divya-desam-north',
+  name: 'North India Divya Desam Tour',
+  duration: '7 Days',
+  // IDs used by the backend to fetch temple data
+  templeIds: ['dd99','dd100','dd101','dd102','dd103','dd104','dd105', 'dd106'], 
+  // Names used by the frontend for display
+  temples: ['Badrinath', 'Muktinath', 'Naimisharanya', 'Joshimath', 'Devprayag','Ayodhya','Gokul','Mathura'],
+  
+  image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1760706520/dd102_lqflqx.jpg',
+  
+  season: 'May-October',
+  description: 'Spiritual yatra through the most remote and ancient Divya Desams located in the Northern and Himalayan regions of India, including Badrinath and Muktinath.'
+},
     {
       id: 'jyotirlinga-circuit',
       name: '12 Jyotirlinga Darshan',
@@ -45,11 +59,46 @@ const TemplePackages = ({ isDarkMode, onPackageClick }) => {
       duration: '5 Days',
       temples: ['Palani', 'Thiruchendur', 'Swamimalai', 'Thiruparankundram'],
       
-      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147323/m1_vrxbv9.png',
+      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147328/m5_w6w69b.png',
       
       season: 'Oct-March',
       description: 'Complete tour of Lord Murugan\'s six sacred abodes'
     },
+    
+    {
+      id: 'pancha-bhoota',
+      name: 'Pancha Bhoota Sthalams',
+      duration: '4 Days',
+      temples: ['Ekambareswarar', 'Jambukeswarar', 'Annamalaiyar', 'Srikalahasti'],
+     
+      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147378/pe3_abpb8x.png',
+      
+      season: 'Oct-March',
+      description: 'Visit temples representing five elements of nature'
+    },
+    {
+      id: 'hanuman-circuit',
+      name: 'Hanuman Temple Circuit',
+      duration: '6 Days',
+      temples: ['Sankat Mochan', 'Mahavir Mandir', 'Salasar Balaji', 'Panchmukhi'],
+      
+      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147351/h3_lq9hbl.png',
+      
+      season: 'Year-round',
+      description: 'Powerful circuit of Lord Hanuman\'s sacred shrines'
+    },
+    {
+      id: 'ashtavinayak',
+      name: 'Ashtavinayak Yatra',
+      duration: '2 Days',
+      temples: ['Mayureshwar', 'Siddhivinayak', 'Ballaleshwar', 'Varadavinayak'],
+      
+      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147359/g2_u8wwqo.png',
+      
+      season: 'Year-round',
+      description: 'Complete 8 sacred Ganesha temples in Maharashtra'
+    },
+
     {
       id: 'shakti-peetha',
       name: 'Shakti Peetha Yatra',
@@ -61,39 +110,6 @@ const TemplePackages = ({ isDarkMode, onPackageClick }) => {
       season: 'Year-round',
       description: 'Sacred journey to powerful Goddess Shakti temples'
     },
-    {
-      id: 'pancha-bhoota',
-      name: 'Pancha Bhoota Sthalams',
-      duration: '4 Days',
-      temples: ['Ekambareswarar', 'Jambukeswarar', 'Annamalaiyar', 'Srikalahasti'],
-     
-      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147292/pb_ng5jll.png',
-      
-      season: 'Oct-March',
-      description: 'Visit temples representing five elements of nature'
-    },
-    {
-      id: 'hanuman-circuit',
-      name: 'Hanuman Temple Circuit',
-      duration: '6 Days',
-      temples: ['Sankat Mochan', 'Mahavir Mandir', 'Salasar Balaji', 'Panchmukhi'],
-      
-      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147343/hanuman_smnyyx.png',
-      
-      season: 'Year-round',
-      description: 'Powerful circuit of Lord Hanuman\'s sacred shrines'
-    },
-    {
-      id: 'ashtavinayak',
-      name: 'Ashtavinayak Yatra',
-      duration: '2 Days',
-      temples: ['Mayureshwar', 'Siddhivinayak', 'Ballaleshwar', 'Varadavinayak'],
-      
-      image: 'https://res.cloudinary.com/dto53p1cf/image/upload/v1759147355/ganesha_xgclup.png',
-      
-      season: 'Year-round',
-      description: 'Complete 8 sacred Ganesha temples in Maharashtra'
-    }
   ];
 
   const scroll = (direction) => {
