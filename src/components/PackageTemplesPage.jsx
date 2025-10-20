@@ -52,7 +52,7 @@ const PackageTemplesPage = ({ isDarkMode }) => {
   // --- NEW LOGIC: Determine button content and route ---
   const getDeityButtonProps = (pkgId) => {
     // Check for Divya Desam
-    if (pkgId === 'divya-desam-south') { 
+    if (pkgId === 'divya-desam-south' || pkgId === 'divya-desam-north') { 
       return {
         text: 'View All 108 Divya Desams',
         // Route format: /god/:godName/:categoryName
