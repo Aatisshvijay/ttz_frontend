@@ -6,49 +6,49 @@ const allShlokas = [
     "topic": "Chapter 1 - Arjuna’s Dilemma",
     "sanskrit": "एतान्न हन्तुमिच्छामि घ्नतोऽपि मधुसूदन।\nअपि त्रैलोक्यराज्यस्य हेतोः किं नु महीकृते॥",
     "transliteration": "Etān na hantum icchāmi ghnato’pi Madhusūdana.\nApi trailokya-rājyasya hetoḥ kiṁ nu mahī-kṛite.",
-    "meaning": "I do not wish to kill them, O Krishna, even if they attack me, not even for the sovereignty of all three worlds—how then for this earth?"
+    "meaning": "O Krishna, I don’t want to kill my own people, even if they attack me. I wouldn’t do it even for ruling all three worlds—so why would I do it just for a kingdom on earth?"
   },
   {
     "topic": "Chapter 2 - Sankhya Yoga",
     "sanskrit": "वासांसि जीर्णानि यथा विहाय नवानि गृह्णाति नरोऽपराणि।\nतथा शरीराणि विहाय जीर्णान्यन्यानि संयाति नवानि देही॥",
     "transliteration": "Vāsāṁsi jīrṇāni yathā vihāya navāni gṛiḥṇāti naro’parāṇi.\nTathā śarīrāṇi vihāya jīrṇāny anyāni saṁyāti navāni dehī.",
-    "meaning": "As a person changes worn-out garments for new ones, so the soul leaves old bodies and accepts new ones."
+    "meaning": "Just like we throw away old clothes and wear new ones, the soul leaves an old body and takes a new one."
   },
   {
     "topic": "Chapter 3 - Karma Yoga",
     "sanskrit": "लोकसंग्रहमेवापि संपश्यन्कर्तुमर्हसि।\nयदि ह्यहं न वर्तेयं जातु कर्मण्यतन्द्रितः॥",
     "transliteration": "Lokasaṅgraham evāpi saṁpaśyan kartum arhasi.\nYadi hyahaṁ na varteyaṁ jātu karmaṇy atandritaḥ.",
-    "meaning": "You should act for the welfare of the world. If I (Krishna) ceased to act, others would follow my example and the world would perish."
+    "meaning": "You should act for the good of society. If I, Krishna, stopped doing my duties, people would copy me and the whole world would fall into disorder."
   },
   {
     "topic": "Chapter 4 - Jnana Karma Sanyasa Yoga",
     "sanskrit": "तदेिद्ध प्रणिपातेन परिप्रश्नेन सेवया।\nउपदेक्ष्यन्ति ते ज्ञानं ज्ञानिनस्तत्त्वदर्शिनः॥",
     "transliteration": "Tad viddhi praṇipātena paripraśnena sevayā.\nUpadekṣhyanti te jñānaṁ jñāninas tattva-darśinaḥ.",
-    "meaning": "Approach the wise with humility, sincere inquiry, and service. Those who know the truth will teach you."
+    "meaning": "Learn the truth by approaching wise teachers with respect, honest questions, and a desire to serve. They will guide you with true knowledge."
   },
   {
     "topic": "Chapter 5 - Karma Sanyasa Yoga",
     "sanskrit": "न प्रहृष्येत्प्रियं प्राप्य नोद्विजेत्प्राप्य चाप्रियम्।\nस्थिरबुद्धिरसंमूढो ब्रह्मविद् ब्रह्मणि स्थितः॥",
     "transliteration": "Na prahṛiṣhyet priyaṁ prāpya nodvijet prāpya cāpriyam.\nSthira-buddhir asaṁmūḍho brahma-vid brahmaṇi sthitaḥ.",
-    "meaning": "One who is wise neither rejoices on gaining something pleasant nor grieves on experiencing the unpleasant; such a person is firmly established in divine consciousness."
+    "meaning": "A wise person doesn’t get overly happy when good things happen or upset when bad things happen. Their mind stays steady in peace."
   },
   {
     "topic": "Chapter 6 - Dhyana Yoga",
     "sanskrit": "यत्नाद्यत्करमाणोऽपि योगी संशुद्धकिल्बिषः।\nअनेन ब्रह्मसंस्पर्शमत्यन्तं सुखमश्नुते॥",
     "transliteration": "Yatnād yatkaramāṇo’pi yogī saṁśuddha-kilbiṣaḥ.\nAnena brahma-saṁsparśam atyantaṁ sukham aśnute.",
-    "meaning": "Through disciplined effort, the yogi becomes purified of all impurities and attains limitless bliss through union with the Divine."
+    "meaning": "With sincere effort and discipline, the yogi becomes pure and experiences endless happiness through connection with the Divine."
   },
   {
     "topic": "Chapter 7 - Jnana Vijnana Yoga",
     "sanskrit": "मूढोऽयमाभिजानाति लोकः मां अजमव्ययम्।\nन हं प्रकटः सर्वस्य योगमायासमावृतः॥",
     "transliteration": "Mūḍho’yam nābhijānāti loko māṁ ajam avyayam.\nNa haṁ prakāśaḥ sarvasya yoga-māyā-samāvṛitaḥ.",
-    "meaning": "Deluded by My divine power (Yogamaya), people do not recognize Me as the unborn and imperishable Supreme."
+    "meaning": "Because of My divine power, people do not recognize Me as the eternal and changeless Supreme Being."
   }, 
   {
     "topic": "Chapter 8 - Akshara Brahma Yoga",
     "sanskrit": "यत्र काले त्वनावृत्तिमावृत्तिं चैव योगिनः।\nप्रयाता यान्ति तं कालं वक्ष्यामि भरतर्षभ॥",
     "transliteration": "Yatra kāle tvanāvṛittim āvṛittiṁ chaiva yoginaḥ.\nPrayātā yānti taṁ kālaṁ vakṣhyāmi Bharatarṣhabha.",
-    "meaning": "I shall explain the time at which departing yogis never return, and the time at which they return again."
+    "meaning": "I will explain the times when yogis who leave their bodies never return, and the times when they return again."
   },
   {
     "topic": "Chapter 9 - Raja Vidya Raja Guhya Yoga",
@@ -60,55 +60,55 @@ const allShlokas = [
     "topic": "Chapter 10 - Vibhuti Yoga",
     "sanskrit": "तेजोधृत्युद्भवश्चैव सत्त्वं तेजश्च भारत।\nमत्सम्भवं च ते विद्धि सर्वं संसिद्धिमिच्छताम्॥",
     "transliteration": "Tejo-dhṛity-udbhavaś chaiva sattvaṁ tejaś cha Bhārata.\nMat-sambhavam cha te viddhi sarvaṁ saṁsiddhim icchatām.",
-    "meaning": "Strength, brilliance, firmness, and excellence—know them all to arise from Me, O Arjuna."
+    "meaning": "At the end of each cosmic cycle, all beings return to My nature. When the new cycle begins, I create them again."
   },
   {
     "topic": "Chapter 11 - Vishwaroopa Darshana Yoga",
     "sanskrit": "कालेनाहं महतां प्रपुष्टो लोकान्समाहर्तुमिह प्रवृत्तः।\nऋतेऽपि त्वां न भविष्यन्ति सर्वे येऽवस्थिताः प्रत्यनीकेषु योधाः॥",
     "transliteration": "Kālenāhaṁ mahatāṁ prapuṣhṭo lokān samāhartum iha pravṛittaḥ.\nRite’pi tvāṁ na bhaviṣhyanti sarve ye’vasthitāḥ pratyanīkeṣu yodhāḥ.",
-    "meaning": "Time I am, destroyer of worlds. All the warriors in these opposing armies will cease to exist, even without your participation."
+    "meaning": "I am Time, the destroyer of worlds. All these warriors will die anyway, even without you taking part."
   },
   {
     "topic": "Chapter 12 - Bhakti Yoga",
     "sanskrit": "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहंकारः समदुःखसुखः क्षमी॥",
     "transliteration": "Adveṣhṭā sarva-bhūtānāṁ maitraḥ karuṇa eva cha.\nNirmamo nirahaṅkāraḥ sama-duḥkha-sukhaḥ kṣhamī.",
-    "meaning": "One who hates none, is friendly and compassionate, free from ego and possessiveness, and remains steady in joy and sorrow—such a devotee is dear to Me."
+    "meaning": "The devotee who hates no one, who is kind, caring, humble, and stays calm in both happiness and sorrow—such a person is very dear to Me."
   },
   {
     "topic": "Chapter 13 - Kshetra Kshetragya Vibhaga Yoga",
     "sanskrit": "ज्ञानं ज्ञेयं ज्ञानगम्यं हृदि सर्वस्य विष्ठितम्।\nसर्वभूतस्थमात्मानं सर्वभूतानि चात्मनि॥",
     "transliteration": "Jñānaṁ jñeyaṁ jñāna-gamyaṁ hṛidi sarvasya viṣhṭhitam.\nSarva-bhūta-stham ātmānaṁ sarva-bhūtāni chātmani.",
-    "meaning": "The Supreme is knowledge, the object of knowledge, and the goal of knowledge—residing in the hearts of all beings."
+    "meaning": "The Supreme is the source of all knowledge and the goal of knowledge, and lives within the heart of every living being."
   },
   {
     "topic": "Chapter 14 - Gunatraya Vibhaga Yoga",
     "sanskrit": "नान्यं गुणेभ्यः कर्तारं यदा द्रष्टानुपश्यति।\nगुणेभ्यश्च परं वेत्ति मद्भावं सोऽधिगच्छति॥",
     "transliteration": "Nānyaṁ guṇebhyaḥ kartāraṁ yadā draṣhṭānupaśhyati.\nGuṇebhyaś cha paraṁ vetti mad-bhāvaṁ so’dhigachchhati.",
-    "meaning": "When the wise see no doer other than the gunas (modes), and know the Supreme beyond these modes, they attain My nature."
+    "meaning": "When a person realizes that the gunas (qualities of nature) perform all actions and the Supreme is beyond these gunas, they reach the divine state."
   },
   {
     "topic": "Chapter 15 - Purushottama Yoga",
     "sanskrit": "यस्मात्क्षरमतीतोऽहमक्षरादपि चोत्तमः।\nअतोऽस्मि लोके वेदे च प्रथितः पुरुषोत्तमः॥",
     "transliteration": "Yasmāt kṣharam atīto’ham akṣharād api chottamaḥ.\nAto’smi loke vede cha prathitaḥ Puruṣhottamaḥ.",
-    "meaning": "Because I am beyond both the destructible and the imperishable, I am known in the world and in the Vedas as the Supreme Person."
+    "meaning": "I am higher than both the perishable world and the imperishable soul. That is why the Vedas call Me the Supreme Person."
   },
   {
     "topic": "Chapter 16 - Daivasura Sampad Vibhaga Yoga",
     "sanskrit": "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥",
     "transliteration": "Abhayaṁ sattva-saṁśuddhir jñāna-yoga-vyavasthitiḥ.\nDānaṁ damaś cha yajñaś cha svādhyāyas tapa ārjavam.",
-    "meaning": "Fearlessness, purity of mind, dedication to knowledge and yoga, charity, self-control, sacrifice, study of scriptures, and honesty—these are divine qualities."
+    "meaning": "Fearlessness, purity, dedication to knowledge, charity, self-control, sacrifice, spiritual study, and honesty—these are divine qualities."
   },
   {
     "topic": "Chapter 17 - Shraddhatraya Vibhaga Yoga",
     "sanskrit": "अन्नं ब्रह्मैव नाडीभ्यः प्राणा ब्रह्मैव सर्वतः।\nयज्ञः कर्म च ब्रह्मैव ब्रह्मैव तु सदा स्मर॥",
     "transliteration": "Annaṁ brahmaiva nāḍībhyaḥ prāṇā brahmaiva sarvataḥ.\nYajñaḥ karma cha brahmaiva brahmaiva tu sadā smara.",
-    "meaning": "Food is Brahman, life-energy is Brahman, every action is truly Brahman—remember the Divine in all actions."
+    "meaning": "Food is sacred like Brahman, life-energy is Brahman, and every action is Brahman. Remember the Divine in everything you do."
   },
   {
     "topic": "Chapter 18 - Moksha Sanyasa Yoga",
     "sanskrit": "नियतस्य तु संन्यासः कर्मणो नोपपद्यते।\nमोहात्तस्य परित्यागस्तामसः परिकीर्तितः॥",
     "transliteration": "Niyatasya tu saṁnyāsaḥ karmaṇo nopapadyate.\nMohāt tasya parityāgas tāmasaḥ parikīrtitaḥ.",
-    "meaning": "Renouncing prescribed duties is improper. Abandoning action out of confusion or ignorance is considered dark (tamasic)."
+    "meaning": "It is wrong to give up your duties. Quitting actions out of confusion or ignorance is considered a dark, negative kind of renunciation."
   },
   {
     "topic": "Chapter 1 - Arjuna’s Dilemma",
