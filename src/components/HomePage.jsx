@@ -308,10 +308,15 @@ const HomePage = ({ isDarkMode }) => {
             <p className={`text-sm text-center ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
               {getDeityDescription(deityName)}
             </p>
-            <div className={`mt-3 text-xs px-3 py-1 rounded-full ${
+            {/* <div className={`mt-3 text-xs px-3 py-1 rounded-full ${
               isDarkMode ? "bg-orange-900 text-orange-200" : "bg-orange-100 text-orange-800"
             }`}>
               {getDisplayCount(deityName)}
+            </div> */}
+            <div>
+              <span className="inline-block mt-4 px-4 py-2 rounded-full bg-orange-500 text-white font-semibold text-sm transition-colors duration-300 group-hover:bg-orange-600">
+               View Temples
+              </span>
             </div>
           </div>
         ))}
