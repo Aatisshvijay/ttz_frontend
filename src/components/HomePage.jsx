@@ -261,7 +261,7 @@ const HomePage = ({ isDarkMode }) => {
 
       <Gita isDarkMode={isDarkMode} />
 
-      <TemplePackages 
+      {/* <TemplePackages 
     isDarkMode={isDarkMode}
     onPackageClick={(pkg) => {
       if (pkg.id === 'view-all') {
@@ -270,7 +270,7 @@ const HomePage = ({ isDarkMode }) => {
         navigate(`/packages/${pkg.id}`);
       }
     }}
-  />
+  /> */}
 
       <div className="text-center mb-2" style={{ minHeight: '80px' }}>
         <h2 className="text-3xl font-bold mb-4 text-center">
