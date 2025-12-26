@@ -27,19 +27,19 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
         >
           Your Temple Bucketlist is Empty
         </h2>
-        <p
+        {/* <p
           className={`text-xl mb-8 ${
             isDarkMode ? "text-gray-400" : "text-gray-600"
           }`}
         >
           Start adding temples to unlock free journey planner!!
-        </p>
+        </p> */}
         <button
           onClick={() => navigate("/")}
           className={`px-8 py-4 rounded-full font-semibold transition-colors duration-300 ${
             isDarkMode
-              ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 text-white"
-              : "bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 text-white"
+              ? "bg-orange-500 hover:bg-orange-600 text-white"
+              : "bg-orange-500 hover:bg-orange-600 text-white"
           }`}
         >
           Explore Temples
@@ -88,7 +88,7 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
           {validBucketlist.length !== 1 ? "s" : ""} on your spiritual journey
         </p>
 
-        {validBucketlist.length >= 2 && (
+        {/* {validBucketlist.length >= 2 && (
           <button
             onClick={handleTravelPlannerOpen}
             className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
@@ -112,9 +112,9 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
             </svg>
             Plan Your Temple Journey for free
           </button>
-        )}
+        )} */}
 
-        {validBucketlist.length === 1 && (
+        {/* {validBucketlist.length === 1 && (
           <div
             className={`inline-block px-4 py-2 rounded-full text-sm ${
               isDarkMode
@@ -124,7 +124,7 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
           >
             Add more temples to unlock travel planning features
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -244,12 +244,12 @@ const BucketlistPage = ({ bucketlist, onRemove, isDarkMode }) => {
         ))}
       </div>
 
-      <SimpleTravelPlannerModal
+      {/* <SimpleTravelPlannerModal
         isOpen={showTravelPlanner}
         onClose={() => setShowTravelPlanner(false)}
         bucketlist={validBucketlist}
         isDarkMode={isDarkMode}
-      />
+      /> */}
     </div>
   );
 };
