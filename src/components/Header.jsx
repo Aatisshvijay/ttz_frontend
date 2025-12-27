@@ -25,7 +25,7 @@ const Header = ({ isDarkMode, toggleDarkMode, bucketlistCount, onSearch }) => {
 
   // Enhanced search suggestions with categories
   const searchSuggestions = [
-    { term: 'Arupadaiveedu', category: 'Murugan Category', description: 'Six sacred abodes of Lord Murugan' },
+    { term: 'Murugan Arupadai veedu (6 Houses) of Lord Murugan', category: 'Murugan Category', description: 'Six sacred abodes of Lord Murugan' },
     { term: 'Jyotirlingas', category: 'Shiva Category', description: '12 self-manifested Shiva shrines' },
     { term: 'Divya Desams', category: 'Vishnu Category', description: '108 sacred Vishnu temples' },
     { term: 'Shakti Peethas', category: 'Goddess Category', description: 'Sacred goddess sati temples' },

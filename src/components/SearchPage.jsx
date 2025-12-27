@@ -254,7 +254,7 @@ const searchResults = await api.temples.searchTemples(searchQuery);
                   />
                   
                   {/* Enhanced category and deity badges */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1">
+                  {/* <div className="absolute top-3 left-3 flex flex-col gap-1">
                     {temple.deity && (
                       <div className={`text-xs px-2 py-1 rounded-full backdrop-blur-sm font-medium ${
                         isDarkMode ? 'bg-purple-900 bg-opacity-90 text-purple-200' : 'bg-purple-500 bg-opacity-90 text-white'
@@ -276,7 +276,7 @@ const searchResults = await api.temples.searchTemples(searchQuery);
                         {temple.state}
                       </div>
                     )}
-                  </div>
+                  </div> */}
                 </div>
                 
                 <div className="p-6">
