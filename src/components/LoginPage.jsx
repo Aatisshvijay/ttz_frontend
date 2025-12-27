@@ -14,8 +14,8 @@ const LoginPage = ({ isDarkMode }) => {
   const { login, register } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); //to prevent the vaue from refreshing
+    setLoading(true); // Disable the form during submission (reset later)
     setError('');
     setSuccess('');
 
@@ -47,8 +47,8 @@ const LoginPage = ({ isDarkMode }) => {
   };
 
   const toggleMode = () => {
-    setIsSignUp(!isSignUp);
-    setName('');
+    setIsSignUp(!isSignUp); // Toggle between login and signup
+    setName(''); // Reset fields
     setEmail('');
     setPassword('');
     setError('');
@@ -100,7 +100,7 @@ const LoginPage = ({ isDarkMode }) => {
                   </label>
                   <input
                     type="text"
-                    value={name}
+                    value={name} // Reset fields
                     onChange={(e) => setName(e.target.value)}
                     required={isSignUp}
                     disabled={loading}
